@@ -2,11 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Local Language Speech to Text</title>
+    <meta name="description" content="Speech to text application supporting multiple local languages with translation capabilities">
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#2c3e50" />
     <style>
@@ -18,6 +16,9 @@
         --danger-color: #e74c3c;
         --dark-color: #2c3e50;
         --light-color: #ecf0f1;
+        --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --font-rtl: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        --transition-speed: 0.2s;
       }
 
       * {
@@ -26,8 +27,7 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
+        font-family: var(--font-main);
         line-height: 1.6;
         margin: 0;
         padding: 0;
@@ -72,19 +72,32 @@
         min-height: 100vh;
       }
 
+      h1, h2, h3 {
+        margin-top: 0;
+        color: var(--dark-color);
+      }
+
       h1 {
         text-align: center;
-        color: var(--dark-color);
         margin-bottom: 20px;
         font-size: 1.5rem;
       }
 
-      .android-message {
-        background-color: #fff3e0;
+      .message-box {
         padding: 12px;
         border-radius: 8px;
         margin: 10px 0;
-        border-left: 4px solid #ffa000;
+        border-left: 4px solid;
+      }
+
+      .android-message {
+        background-color: #fff3e0;
+        border-left-color: #ffa000;
+      }
+
+      .info-message {
+        background-color: #e3f2fd;
+        border-left-color: #2196f3;
       }
 
       .control-panel {
@@ -101,16 +114,30 @@
         border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
-        transition: all 0.2s;
+        transition: all var(--transition-speed);
         font-size: 0.9rem;
         flex: 1 1 120px;
         min-width: 0;
         max-width: 200px;
         touch-action: manipulation;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
       }
 
       button:active {
         transform: scale(0.98);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      button:hover:not(:disabled) {
+        opacity: 0.9;
       }
 
       #toggleBtn {
@@ -151,16 +178,6 @@
       #downloadAudioBtn {
         background-color: #9c27b0;
         color: white;
-      }
-
-      button:hover {
-        opacity: 0.9;
-      }
-
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none !important;
       }
 
       .status {
@@ -210,6 +227,7 @@
         border-radius: 6px;
         position: relative;
         word-break: break-word;
+        transition: transform 0.2s ease;
       }
 
       .note-item .delete-note {
@@ -227,6 +245,12 @@
         text-align: center;
         cursor: pointer;
         padding: 0;
+        opacity: 0;
+        transition: opacity var(--transition-speed);
+      }
+
+      .note-item:hover .delete-note {
+        opacity: 1;
       }
 
       .settings {
@@ -253,7 +277,7 @@
         word-break: break-word;
       }
 
-      select {
+      select, input[type="range"] {
         padding: 10px;
         border-radius: 8px;
         border: 1px solid #bdc3c7;
@@ -341,7 +365,7 @@
       .rtl-text {
         direction: rtl;
         text-align: right;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: var(--font-rtl);
       }
 
       .confidence-indicator {
@@ -357,15 +381,6 @@
         background-color: var(--success-color);
         width: 0%;
         transition: width 0.3s ease;
-      }
-
-      .android-warning {
-        background-color: #fff3e0;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        font-size: 0.9rem;
-        border-left: 4px solid #ffa000;
       }
 
       .export-dialog {
@@ -412,7 +427,6 @@
         border-radius: 50%;
         border-top-color: var(--success-color);
         animation: spin 1s ease-in-out infinite;
-        margin-right: 8px;
       }
 
       @keyframes spin {
@@ -446,6 +460,10 @@
         background-color: var(--success-color);
       }
 
+      .alert-info {
+        background-color: var(--secondary-color);
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -455,6 +473,44 @@
           opacity: 1;
           transform: translateX(-50%) translateY(0);
         }
+      }
+
+      .icon {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      .install-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 10px 15px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .progress-bar {
+        height: 4px;
+        background-color: rgba(255, 255, 255, 0.3);
+        width: 100%;
+        margin-top: 8px;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+
+      .progress {
+        height: 100%;
+        background-color: var(--success-color);
+        width: 0%;
+        transition: width 0.3s ease;
       }
 
       @media (min-width: 768px) {
@@ -509,7 +565,7 @@
         <span id="androidStatusText">Initializing...</span>
       </div>
 
-      <div class="android-warning" id="androidWarning">
+      <div class="android-message" id="androidWarning" style="display: none">
         <strong>Note for Android Users:</strong> For best results with local
         languages, use Chrome browser and ensure you have the language pack
         installed.
@@ -520,24 +576,60 @@
       </div>
 
       <div class="control-panel">
-        <button id="toggleBtn">Pause Listening</button>
-        <button id="addNoteBtn">Add as Note</button>
-        <button id="clearBtn">Clear All</button>
-        <button id="exportBtn">Export Notes</button>
-        <button id="importBtn">Import Notes</button>
-        <button id="googleTranslateBtn">Google Translate</button>
+        <button id="toggleBtn">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7,9.5V14.5H12V9.5H7M16,9.5V14.5H17V9.5H16Z" />
+          </svg>
+          Pause Listening
+        </button>
+        <button id="addNoteBtn">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+          </svg>
+          Add as Note
+        </button>
+        <button id="clearBtn">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+          </svg>
+          Clear All
+        </button>
+        <button id="exportBtn">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+          </svg>
+          Export Notes
+        </button>
+        <button id="importBtn">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+          </svg>
+          Import Notes
+        </button>
+        <button id="googleTranslateBtn">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
+          </svg>
+          Google Translate
+        </button>
         <button id="downloadAudioBtn" style="display: none">
-          Download Recording (.wav)
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z" />
+          </svg>
+          Download Recording
         </button>
       </div>
 
       <div class="transcript-container">
-        <div class="text-display" id="textDisplay" contenteditable="true">
+        <div class="text-display" id="textDisplay" contenteditable="true" spellcheck="false">
           Your transcribed text will appear here...
         </div>
 
         <div class="notes-display">
           <h3>Your Notes</h3>
+          <div class="progress-bar" id="storageUsageBar">
+            <div class="progress" id="storageUsageProgress"></div>
+          </div>
           <ul class="notes-list" id="notesList"></ul>
         </div>
       </div>
@@ -591,7 +683,12 @@
       </div>
 
       <div class="translation-panel">
-        <button id="translateBtn">Translate Text</button>
+        <button id="translateBtn">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
+          </svg>
+          Translate Text
+        </button>
         <label for="targetLanguage">Target Language:</label>
         <select id="targetLanguage">
           <optgroup label="African Languages">
@@ -629,8 +726,18 @@
       <div class="audio-controls">
         <h3>Audio Settings</h3>
         <div class="audio-panel">
-          <button id="startMicBtn">Start Microphone</button>
-          <button id="stopMicBtn" disabled>Stop Microphone</button>
+          <button id="startMicBtn">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+            </svg>
+            Start Microphone
+          </button>
+          <button id="stopMicBtn" disabled>
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M19,11C19,13.78 17.58,16.23 15.43,17.67L14,16.24C15.81,15.08 17,13.14 17,11H19M12,16.5L13.5,18H10.5L12,16.5M13.33,12.3L14.37,13.34C14.64,12.97 14.84,12.54 14.95,12.08L13.33,10.46V12.3M12,4A7,7 0 0,1 19,11H17A5,5 0 0,0 12,6A5,5 0 0,0 7,11H5A7,7 0 0,1 12,4M9,11C9,12.66 10.34,14 12,14C13.66,14 15,12.66 15,11V5C15,3.34 13.66,2 12,2C10.34,2 9,3.34 9,5V11M6.67,10.46L5.05,12.08C5.16,12.54 5.36,12.97 5.63,13.34L6.67,12.3V10.46M20,4L18.5,5.5L20,7L21.5,5.5L20,4M4,4L2.5,5.5L4,7L5.5,5.5L4,4M12,19A1,1 0 0,1 13,20A1,1 0 0,1 12,21A1,1 0 0,1 11,20A1,1 0 0,1 12,19Z" />
+            </svg>
+            Stop Microphone
+          </button>
           <div style="flex: 1; min-width: 150px">
             <label for="volumeControl">Volume:</label>
             <input
@@ -684,18 +791,10 @@
       const DB_VERSION = 2;
       const STORE_NAME = "notes";
       const rtlLanguages = [
-        "ar",
-        "fa",
-        "he",
-        "ur",
-        "ps",
-        "ku",
-        "sd",
-        "dv",
-        "yi",
-        "ha",
+        "ar", "fa", "he", "ur", "ps", "ku", "sd", "dv", "yi", "ha"
       ];
       const translationCache = new Map();
+      const MAX_STORAGE_QUOTA = 5 * 1024 * 1024; // 5MB
 
       // Audio processor worklet code
       const audioProcessorWorkletCode = `
@@ -715,7 +814,7 @@
         registerProcessor('audio-processor', AudioProcessor);
       `;
 
-      // ========== ANDROID-SPECIFIC FUNCTIONS ==========
+      // ========== INITIALIZATION FUNCTIONS ==========
       function isAndroid() {
         return /Android/i.test(navigator.userAgent);
       }
@@ -723,6 +822,10 @@
       function isAndroidApp() {
         const userAgent = navigator.userAgent;
         return /Android/i.test(userAgent) && /wv|webview/i.test(userAgent);
+      }
+
+      function isIOS() {
+        return /iPhone|iPad|iPod/i.test(navigator.userAgent);
       }
 
       function setupAndroidApp() {
@@ -902,12 +1005,10 @@
             return true;
           }
 
-          audioContext = new (window.AudioContext || window.webkitAudioContext)(
-            {
-              latencyHint: "interactive",
-              sampleRate: 16000,
-            }
-          );
+          audioContext = new (window.AudioContext || window.webkitAudioContext)({
+            latencyHint: "interactive",
+            sampleRate: 16000,
+          });
 
           if (isAndroid()) {
             const buffer = audioContext.createBuffer(
@@ -1037,6 +1138,7 @@
 
           request.onsuccess = (event) => {
             db = event.target.result;
+            updateStorageUsage();
             resolve(db);
           };
         });
@@ -1055,7 +1157,10 @@
             timestamp: new Date().toISOString(),
           });
 
-          request.onsuccess = () => resolve(request.result);
+          request.onsuccess = () => {
+            updateStorageUsage();
+            resolve(request.result);
+          };
           request.onerror = (event) => reject(event.target.error);
         });
       }
@@ -1081,7 +1186,10 @@
           const store = transaction.objectStore(STORE_NAME);
           const request = store.delete(id);
 
-          request.onsuccess = () => resolve(true);
+          request.onsuccess = () => {
+            updateStorageUsage();
+            resolve(true);
+          };
           request.onerror = (event) => reject(event.target.error);
         });
       }
@@ -1094,9 +1202,38 @@
           const store = transaction.objectStore(STORE_NAME);
           const request = store.clear();
 
-          request.onsuccess = () => resolve(true);
+          request.onsuccess = () => {
+            updateStorageUsage();
+            resolve(true);
+          };
           request.onerror = (event) => reject(event.target.error);
         });
+      }
+
+      async function updateStorageUsage() {
+        if (!db) return;
+        
+        try {
+          const notes = await getAllNotesFromDB();
+          const totalSize = JSON.stringify(notes).length;
+          const percentage = Math.min(100, (totalSize / MAX_STORAGE_QUOTA) * 100);
+          
+          const progressBar = document.getElementById("storageUsageProgress");
+          if (progressBar) {
+            progressBar.style.width = `${percentage}%`;
+            
+            if (percentage > 90) {
+              progressBar.style.backgroundColor = "var(--danger-color)";
+              showAlert("Storage almost full - consider exporting notes", "warning");
+            } else if (percentage > 70) {
+              progressBar.style.backgroundColor = "var(--warning-color)";
+            } else {
+              progressBar.style.backgroundColor = "var(--success-color)";
+            }
+          }
+        } catch (error) {
+          console.error("Error calculating storage usage:", error);
+        }
       }
 
       // ========== EXPORT/IMPORT FUNCTIONS ==========
@@ -1154,14 +1291,14 @@
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = "speech-notes-export.docx";
+          a.download = `speech-notes-${new Date().toISOString().split('T')[0]}.docx`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         } catch (error) {
           console.error("Error generating Word document:", error);
-          alert("Failed to export as Word document.");
+          showAlert("Failed to export as Word document.", "error");
         }
       }
 
@@ -1172,14 +1309,14 @@
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = "speech-notes-export.txt";
+          a.download = `speech-notes-${new Date().toISOString().split('T')[0]}.txt`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         } catch (error) {
           console.error("Error generating TXT file:", error);
-          alert("Failed to export as TXT file.");
+          showAlert("Failed to export as TXT file.", "error");
         }
       }
 
@@ -1419,7 +1556,7 @@
         window.open(url, "_blank");
       }
 
-      // ========== INITIALIZATION ==========
+      // ========== MAIN INITIALIZATION ==========
       document.addEventListener("DOMContentLoaded", async function () {
         const textDisplay = document.getElementById("textDisplay");
         const notesList = document.getElementById("notesList");
@@ -1428,8 +1565,7 @@
         const clearBtn = document.getElementById("clearBtn");
         const exportBtn = document.getElementById("exportBtn");
         const importBtn = document.getElementById("importBtn");
-        const googleTranslateBtn =
-          document.getElementById("googleTranslateBtn");
+        const googleTranslateBtn = document.getElementById("googleTranslateBtn");
         const downloadAudioBtn = document.getElementById("downloadAudioBtn");
         const status = document.getElementById("status");
         const languageSelect = document.getElementById("languageSelect");
@@ -1488,6 +1624,18 @@
           androidWarning.style.display = "none";
         }
 
+        // Show iOS-specific instructions
+        if (isIOS()) {
+          const iosMessage = document.createElement("div");
+          iosMessage.className = "info-message";
+          iosMessage.innerHTML = `
+            <strong>iOS Users:</strong> For best results, use Safari browser and ensure microphone permissions are granted.
+          `;
+          document
+            .querySelector(".container")
+            .insertBefore(iosMessage, document.querySelector(".status"));
+        }
+
         // Initialize database.
         try {
           await initDB();
@@ -1498,6 +1646,7 @@
           });
         } catch (error) {
           console.error("Failed to initialize database:", error);
+          showAlert("Failed to load notes from storage", "error");
         }
 
         // Check for browser support.
@@ -1761,7 +1910,7 @@
             }
 
             // Initialize audio context if needed
-            if (!audioContext && !initAudioContext()) {
+            if (!audioContext && !(await initAudioContext())) {
               return;
             }
 
@@ -1858,6 +2007,7 @@
           } catch (error) {
             console.error("Microphone error:", error);
             status.innerHTML = `<span style="color:red;">Microphone error: ${error.message}</span>`;
+            showAlert("Failed to access microphone. Please check permissions.", "error");
           }
         });
 
@@ -1889,7 +2039,7 @@
           if (audioUrl) {
             const a = document.createElement("a");
             a.href = audioUrl;
-            a.download = `recording-${new Date().toISOString()}.wav`;
+            a.download = `recording-${new Date().toISOString().replace(/[:.]/g, '-')}.wav`;
             a.click();
           }
         });
@@ -2007,6 +2157,7 @@
               finalTranscript = "";
               lastFinalTranscript = "";
               localStorage.removeItem("speechDraft");
+              showAlert("Note saved successfully", "success");
             } catch (error) {
               console.error("Failed to save note:", error);
               addNoteToUI(noteText, null, currentLanguage);
@@ -2014,12 +2165,15 @@
               finalTranscript = "";
               lastFinalTranscript = "";
               localStorage.removeItem("speechDraft");
+              showAlert("Note saved locally (not synced to storage)", "warning");
             }
+          } else {
+            showAlert("No text to save as note", "warning");
           }
         });
 
         clearBtn.addEventListener("click", async function () {
-          if (confirm("Are you sure you want to clear all notes?")) {
+          if (confirm("Are you sure you want to clear all notes? This cannot be undone.")) {
             textDisplay.textContent = "";
             notesList.innerHTML = "";
             finalTranscript = "";
@@ -2027,8 +2181,10 @@
             try {
               await clearAllNotesFromDB();
               localStorage.removeItem("speechDraft");
+              showAlert("All notes cleared", "success");
             } catch (error) {
               console.error("Failed to clear notes:", error);
+              showAlert("Failed to clear notes from storage", "error");
             }
           }
         });
@@ -2056,7 +2212,7 @@
           try {
             const notes = await getAllNotesFromDB();
             if (notes.length === 0) {
-              alert("No notes to export.");
+              showAlert("No notes to export", "warning");
               return;
             }
 
@@ -2065,8 +2221,18 @@
             exportDialog.className = "export-dialog";
             exportDialog.innerHTML = `
               <h3>Export Options</h3>
-              <button id="exportDocx">Export as Word Document (.docx)</button>
-              <button id="exportTxt">Export as Text File (.txt)</button>
+              <button id="exportDocx">
+                <svg class="icon" viewBox="0 0 24 24">
+                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                </svg>
+                Export as Word Document (.docx)
+              </button>
+              <button id="exportTxt">
+                <svg class="icon" viewBox="0 0 24 24">
+                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                </svg>
+                Export as Text File (.txt)
+              </button>
               <button id="exportCancel">Cancel</button>
             `;
 
@@ -2093,7 +2259,7 @@
               });
           } catch (error) {
             console.error("Export failed:", error);
-            alert("Failed to export notes.");
+            showAlert("Failed to export notes", "error");
           }
         });
 
@@ -2106,51 +2272,53 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = async function (e) {
-              try {
-                let notes = [];
+            try {
+              let notes = [];
 
-                if (file.name.endsWith(".docx")) {
-                  notes = await importDocxFile(file);
-                } else if (file.name.endsWith(".txt")) {
-                  const text = e.target.result;
-                  notes = text
-                    .split("\n")
-                    .map((line) => line.trim())
-                    .filter((line) => line.length > 0)
-                    .map((line) => ({ text: line }));
-                }
-
-                // Clear existing notes.
-                notesList.innerHTML = "";
-                await clearAllNotesFromDB();
-
-                // Add new notes.
-                for (const note of notes) {
-                  try {
-                    const text = typeof note === "string" ? note : note.text;
-                    const language = note.language || languageSelect.value;
-                    const noteId = await saveNoteToDB(text, language);
-                    addNoteToUI(text, noteId, language);
-                  } catch (error) {
-                    console.error("Failed to import note:", error);
-                    const text = typeof note === "string" ? note : note.text;
-                    addNoteToUI(text, null, languageSelect.value);
-                  }
-                }
-
-                alert(`Successfully imported ${notes.length} notes.`);
-              } catch (error) {
-                console.error("Import failed:", error);
-                alert("Failed to import notes. Invalid file format.");
+              if (file.name.endsWith(".docx")) {
+                notes = await importDocxFile(file);
+              } else if (file.name.endsWith(".txt")) {
+                const text = await new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onload = (event) => resolve(event.target.result);
+                  reader.onerror = reject;
+                  reader.readAsText(file);
+                });
+                notes = text
+                  .split("\n")
+                  .map((line) => line.trim())
+                  .filter((line) => line.length > 0)
+                  .map((line) => ({ text: line }));
               }
-            };
 
-            if (file.name.endsWith(".docx")) {
-              reader.readAsArrayBuffer(file);
-            } else {
-              reader.readAsText(file);
+              // Clear existing notes.
+              notesList.innerHTML = "";
+              try {
+                await clearAllNotesFromDB();
+              } catch (error) {
+                console.error("Failed to clear existing notes:", error);
+              }
+
+              // Add new notes.
+              let successCount = 0;
+              for (const note of notes) {
+                try {
+                  const text = typeof note === "string" ? note : note.text;
+                  const language = note.language || languageSelect.value;
+                  const noteId = await saveNoteToDB(text, language);
+                  addNoteToUI(text, noteId, language);
+                  successCount++;
+                } catch (error) {
+                  console.error("Failed to import note:", error);
+                  const text = typeof note === "string" ? note : note.text;
+                  addNoteToUI(text, null, languageSelect.value);
+                }
+              }
+
+              showAlert(`Successfully imported ${successCount} of ${notes.length} notes`, "success");
+            } catch (error) {
+              console.error("Import failed:", error);
+              showAlert("Failed to import notes. Invalid file format.", "error");
             }
           });
 
@@ -2226,12 +2394,16 @@
           deleteBtn.className = "delete-note";
           deleteBtn.innerHTML = "×";
           deleteBtn.addEventListener("click", async function () {
-            noteItem.remove();
-            if (id) {
-              try {
-                await deleteNoteFromDB(id);
-              } catch (error) {
-                console.error("Failed to delete note from DB:", error);
+            if (confirm("Delete this note?")) {
+              noteItem.remove();
+              if (id) {
+                try {
+                  await deleteNoteFromDB(id);
+                  showAlert("Note deleted", "success");
+                } catch (error) {
+                  console.error("Failed to delete note from DB:", error);
+                  showAlert("Failed to delete note from storage", "error");
+                }
               }
             }
           });
@@ -2343,17 +2515,13 @@
         deferredPrompt = e;
 
         const installBtn = document.createElement("button");
-        installBtn.textContent = "Install App";
-        installBtn.style.position = "fixed";
-        installBtn.style.bottom = "20px";
-        installBtn.style.right = "20px";
-        installBtn.style.zIndex = "1000";
-        installBtn.style.padding = "10px 15px";
-        installBtn.style.backgroundColor = "#4CAF50";
-        installBtn.style.color = "white";
-        installBtn.style.border = "none";
-        installBtn.style.borderRadius = "5px";
-        installBtn.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
+        installBtn.className = "install-btn";
+        installBtn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z" />
+          </svg>
+          Install App
+        `;
 
         installBtn.addEventListener("click", () => {
           deferredPrompt.prompt();
@@ -2362,14 +2530,17 @@
               console.log("User accepted install.");
             }
             deferredPrompt = null;
+            document.body.removeChild(installBtn);
           });
         });
 
         document.body.appendChild(installBtn);
 
         setTimeout(() => {
-          installBtn.style.display = "none";
-        }, 10000);
+          if (document.body.contains(installBtn)) {
+            document.body.removeChild(installBtn);
+          }
+        }, 15000);
       });
     </script>
   </body>
