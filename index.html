@@ -36,6 +36,34 @@
         touch-action: manipulation;
       }
 
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #121212;
+          color: #e0e0e0;
+        }
+        .container {
+          background-color: #1e1e1e;
+        }
+        .text-display,
+        .notes-display {
+          background-color: #2d2d2d;
+          border-color: #444;
+        }
+        .notes-display {
+          background-color: #333300;
+        }
+        .note-item {
+          background-color: #333300;
+          border-left-color: #666600;
+        }
+        .translation-panel {
+          background-color: #1a237e;
+        }
+        .translation-result {
+          background-color: #1b5e20;
+        }
+      }
+
       .container {
         max-width: 100%;
         margin: 0;
@@ -117,6 +145,11 @@
 
       #googleTranslateBtn {
         background-color: #4285f4;
+        color: white;
+      }
+
+      #downloadAudioBtn {
+        background-color: #9c27b0;
         color: white;
       }
 
@@ -493,6 +526,9 @@
         <button id="exportBtn">Export Notes</button>
         <button id="importBtn">Import Notes</button>
         <button id="googleTranslateBtn">Google Translate</button>
+        <button id="downloadAudioBtn" style="display: none">
+          Download Recording (.wav)
+        </button>
       </div>
 
       <div class="transcript-container">
@@ -625,6 +661,7 @@
     </div>
 
     <script>
+      // Global variables
       let recognition;
       let isListening = false;
       let isAutoListening = true;
@@ -658,7 +695,9 @@
         "yi",
         "ha",
       ];
+      const translationCache = new Map();
 
+      // Audio processor worklet code
       const audioProcessorWorkletCode = `
         class AudioProcessor extends AudioWorkletProcessor {
           process(inputs, outputs) {
@@ -676,6 +715,7 @@
         registerProcessor('audio-processor', AudioProcessor);
       `;
 
+      // ========== ANDROID-SPECIFIC FUNCTIONS ==========
       function isAndroid() {
         return /Android/i.test(navigator.userAgent);
       }
@@ -854,6 +894,7 @@
         }, 300);
       }
 
+      // ========== CORE FUNCTIONS ==========
       async function initAudioContext() {
         try {
           if (audioContext?.state === "suspended") {
@@ -972,6 +1013,7 @@
         }, 3000);
       }
 
+      // ========== DATABASE FUNCTIONS ==========
       function initDB() {
         return new Promise((resolve, reject) => {
           const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -1057,6 +1099,7 @@
         });
       }
 
+      // ========== EXPORT/IMPORT FUNCTIONS ==========
       async function exportAsDocx(notes) {
         try {
           const { default: docx } = await import(
@@ -1167,12 +1210,20 @@
         }
       }
 
+      // ========== TRANSLATION FUNCTIONS ==========
       async function translateText(text, targetLang) {
         if (!text?.trim()) {
           console.error("Invalid text for translation");
           return "";
         }
 
+        // Check cache first
+        const cacheKey = `${text}-${targetLang}`;
+        if (translationCache.has(cacheKey)) {
+          return translationCache.get(cacheKey);
+        }
+
+        // Validate target language
         const validLangs = [
           ...document.getElementById("targetLanguage").options,
         ].map((opt) => opt.value);
@@ -1182,16 +1233,29 @@
         }
 
         try {
+          // Try LibreTranslate first
           const libreResult = await translateWithLibre(text, targetLang);
-          if (libreResult) return libreResult;
+          if (libreResult) {
+            translationCache.set(cacheKey, libreResult);
+            return libreResult;
+          }
 
+          // Fallback to MyMemory
           const myMemoryResult = await translateWithMyMemory(text, targetLang);
-          if (myMemoryResult) return myMemoryResult;
+          if (myMemoryResult) {
+            translationCache.set(cacheKey, myMemoryResult);
+            return myMemoryResult;
+          }
 
-          return localFallbackTranslation(text, targetLang);
+          // Final fallback
+          const fallback = localFallbackTranslation(text, targetLang);
+          translationCache.set(cacheKey, fallback);
+          return fallback;
         } catch (error) {
           console.error("Translation error:", error);
-          return localFallbackTranslation(text, targetLang);
+          const fallback = localFallbackTranslation(text, targetLang);
+          translationCache.set(cacheKey, fallback);
+          return fallback;
         }
       }
 
@@ -1355,6 +1419,7 @@
         window.open(url, "_blank");
       }
 
+      // ========== INITIALIZATION ==========
       document.addEventListener("DOMContentLoaded", async function () {
         const textDisplay = document.getElementById("textDisplay");
         const notesList = document.getElementById("notesList");
@@ -1365,6 +1430,7 @@
         const importBtn = document.getElementById("importBtn");
         const googleTranslateBtn =
           document.getElementById("googleTranslateBtn");
+        const downloadAudioBtn = document.getElementById("downloadAudioBtn");
         const status = document.getElementById("status");
         const languageSelect = document.getElementById("languageSelect");
         const translateBtn = document.getElementById("translateBtn");
@@ -1379,6 +1445,25 @@
         const androidStatus = document.getElementById("androidStatus");
         const androidStatusText = document.getElementById("androidStatusText");
 
+        // Auto-save draft functionality
+        let draftTimer;
+        textDisplay.addEventListener("input", () => {
+          clearTimeout(draftTimer);
+          draftTimer = setTimeout(() => {
+            localStorage.setItem("speechDraft", textDisplay.textContent);
+          }, 5000);
+        });
+
+        // Restore draft on load
+        window.addEventListener("load", () => {
+          const draft = localStorage.getItem("speechDraft");
+          if (draft) {
+            textDisplay.textContent = draft;
+            showAlert("Restored unsaved draft", "success");
+          }
+        });
+
+        // Show Android-specific instructions
         if (isAndroid()) {
           androidWarning.style.display = "block";
           if (!/Chrome/i.test(navigator.userAgent)) {
@@ -1403,8 +1488,10 @@
           androidWarning.style.display = "none";
         }
 
+        // Initialize database.
         try {
           await initDB();
+          // Load existing notes.
           const notes = await getAllNotesFromDB();
           notes.forEach((note) => {
             addNoteToUI(note.text, note.id, note.language);
@@ -1413,6 +1500,7 @@
           console.error("Failed to initialize database:", error);
         }
 
+        // Check for browser support.
         if (
           !("webkitSpeechRecognition" in window) &&
           !("SpeechRecognition" in window)
@@ -1424,9 +1512,11 @@
           return;
         }
 
+        // Initialize recognition differently for Android
         if (isAndroidApp()) {
           setupAndroidApp();
         } else {
+          // Standard initialization for non-Android
           const SpeechRecognition =
             window.SpeechRecognition || window.webkitSpeechRecognition;
           recognition = new SpeechRecognition();
@@ -1629,6 +1719,7 @@
           }
         }
 
+        // Populate audio input devices dropdown
         async function updateAudioInputs() {
           try {
             const devices = await navigator.mediaDevices.enumerateDevices();
@@ -1658,8 +1749,10 @@
           updateAudioInputs
         );
 
+        // Start microphone with proper error handling.
         startMicBtn.addEventListener("click", async function () {
           try {
+            // First stop any existing microphone
             if (isMicActive) {
               if (mediaRecorder && mediaRecorder.state !== "inactive") {
                 mediaRecorder.stop();
@@ -1667,15 +1760,18 @@
               if (microphone) microphone.disconnect();
             }
 
+            // Initialize audio context if needed
             if (!audioContext && !initAudioContext()) {
               return;
             }
 
+            // Get selected device ID
             const deviceId =
               audioInputSelect.value === "default"
                 ? undefined
                 : audioInputSelect.value;
 
+            // Get user media with better device handling
             const stream = await navigator.mediaDevices.getUserMedia({
               audio: {
                 deviceId: deviceId,
@@ -1687,16 +1783,20 @@
               video: false,
             });
 
+            // Create nodes.
             gainNode = audioContext.createGain();
             gainNode.gain.value = volumeControl.value;
 
             analyser = audioContext.createAnalyser();
             analyser.fftSize = 256;
 
+            // Create source and connect nodes.
             microphone = audioContext.createMediaStreamSource(stream);
 
+            // Add audio processing for better headset compatibility
             if (audioContext.createAudioWorklet) {
               try {
+                // Create a blob URL for the audio processor worklet
                 const blob = new Blob([audioProcessorWorkletCode], {
                   type: "application/javascript",
                 });
@@ -1727,8 +1827,11 @@
             }
 
             analyser.connect(audioContext.destination);
+
+            // Setup visualization.
             setupVisualizer();
 
+            // Setup recording.
             mediaRecorder = new MediaRecorder(stream);
             audioChunks = [];
 
@@ -1741,11 +1844,13 @@
             mediaRecorder.onstop = function () {
               audioBlob = new Blob(audioChunks, { type: "audio/wav" });
               audioUrl = URL.createObjectURL(audioBlob);
+              downloadAudioBtn.style.display = "block";
             };
 
-            mediaRecorder.start(100);
+            mediaRecorder.start(100); // Collect 100ms chunks.
             isMicActive = true;
 
+            // Update UI.
             startMicBtn.disabled = true;
             stopMicBtn.disabled = false;
             status.innerHTML =
@@ -1756,6 +1861,7 @@
           }
         });
 
+        // Stop microphone properly.
         stopMicBtn.addEventListener("click", function () {
           if (!isMicActive) return;
 
@@ -1764,6 +1870,7 @@
               mediaRecorder.stop();
             }
 
+            // Disconnect all nodes.
             if (microphone) microphone.disconnect();
             if (gainNode) gainNode.disconnect();
             if (analyser) analyser.disconnect();
@@ -1777,12 +1884,24 @@
           }
         });
 
+        // Download audio recording
+        downloadAudioBtn.addEventListener("click", function () {
+          if (audioUrl) {
+            const a = document.createElement("a");
+            a.href = audioUrl;
+            a.download = `recording-${new Date().toISOString()}.wav`;
+            a.click();
+          }
+        });
+
+        // Volume control.
         volumeControl.addEventListener("input", function () {
           if (gainNode) {
             gainNode.gain.value = this.value;
           }
         });
 
+        // Visualizer with proper animation frame handling.
         function setupVisualizer() {
           const canvas = document.createElement("canvas");
           canvas.width = audioVisualizer.offsetWidth;
@@ -1829,16 +1948,19 @@
           draw();
         }
 
+        // Handle window resize.
         window.addEventListener("resize", function () {
           if (isMicActive) {
             setupVisualizer();
           }
         });
 
+        // Button event listeners.
         toggleBtn.addEventListener("click", function () {
           this.disabled = true;
 
           if (isListening) {
+            // Pause listening.
             isAutoListening = false;
             try {
               recognition.stop();
@@ -1850,6 +1972,7 @@
             status.textContent = "Listening paused.";
             status.style.backgroundColor = "#fff3e0";
           } else {
+            // Start listening.
             isAutoListening = true;
             recognition.lang = languageSelect.value;
             try {
@@ -1883,12 +2006,14 @@
               textDisplay.textContent = "";
               finalTranscript = "";
               lastFinalTranscript = "";
+              localStorage.removeItem("speechDraft");
             } catch (error) {
               console.error("Failed to save note:", error);
               addNoteToUI(noteText, null, currentLanguage);
               textDisplay.textContent = "";
               finalTranscript = "";
               lastFinalTranscript = "";
+              localStorage.removeItem("speechDraft");
             }
           }
         });
@@ -1901,12 +2026,14 @@
             lastFinalTranscript = "";
             try {
               await clearAllNotesFromDB();
+              localStorage.removeItem("speechDraft");
             } catch (error) {
               console.error("Failed to clear notes:", error);
             }
           }
         });
 
+        // Google Translate button event listener
         googleTranslateBtn.addEventListener("click", function () {
           const textToTranslate = textDisplay.textContent.trim();
 
@@ -1920,9 +2047,11 @@
 
           const sourceLang = languageSelect.value;
           const targetLang = targetLanguage.value;
+
           openGoogleTranslate(textToTranslate, sourceLang, targetLang);
         });
 
+        // Updated export button with dialog
         exportBtn.addEventListener("click", async function () {
           try {
             const notes = await getAllNotesFromDB();
@@ -1931,6 +2060,7 @@
               return;
             }
 
+            // Create export dialog
             const exportDialog = document.createElement("div");
             exportDialog.className = "export-dialog";
             exportDialog.innerHTML = `
@@ -1992,9 +2122,11 @@
                     .map((line) => ({ text: line }));
                 }
 
+                // Clear existing notes.
                 notesList.innerHTML = "";
                 await clearAllNotesFromDB();
 
+                // Add new notes.
                 for (const note of notes) {
                   try {
                     const text = typeof note === "string" ? note : note.text;
@@ -2025,6 +2157,7 @@
           fileInput.click();
         });
 
+        // Translation button event listener with enhanced error handling
         translateBtn.addEventListener("click", async function () {
           if (
             !textDisplay.textContent.trim() ||
@@ -2103,6 +2236,7 @@
             }
           });
 
+          // Add touch events for mobile with swipe to delete.
           noteItem.addEventListener(
             "touchstart",
             function (e) {
@@ -2154,6 +2288,7 @@
           }
         });
 
+        // Check online status and update UI.
         function updateOnlineStatus() {
           const offlineIndicator = document.getElementById("offlineIndicator");
           if (navigator.onLine) {
@@ -2167,6 +2302,7 @@
         window.addEventListener("offline", updateOnlineStatus);
         updateOnlineStatus();
 
+        // Page visibility handling.
         document.addEventListener("visibilitychange", function () {
           if (document.visibilityState === "hidden" && isListening) {
             recognition.stop();
@@ -2178,6 +2314,7 @@
           }
         });
 
+        // Beforeunload handling.
         window.addEventListener("beforeunload", function (e) {
           if (isListening) {
             recognition.stop();
@@ -2185,6 +2322,7 @@
         });
       });
 
+      // Service worker registration.
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
@@ -2198,6 +2336,7 @@
         });
       }
 
+      // Install prompt handling.
       let deferredPrompt;
       window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
