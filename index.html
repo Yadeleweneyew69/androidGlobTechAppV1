@@ -2,9 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Local Language Speech to Text</title>
-    <meta name="description" content="Speech to text application supporting multiple local languages with translation capabilities">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Enhanced Speech-to-Text</title>
+    <meta
+      name="description"
+      content="Advanced speech recognition with translation and note-taking"
+    />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#2c3e50" />
     <style>
@@ -16,7 +22,8 @@
         --danger-color: #e74c3c;
         --dark-color: #2c3e50;
         --light-color: #ecf0f1;
-        --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
         --font-rtl: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         --transition-speed: 0.2s;
       }
@@ -72,7 +79,9 @@
         min-height: 100vh;
       }
 
-      h1, h2, h3 {
+      h1,
+      h2,
+      h3 {
         margin-top: 0;
         color: var(--dark-color);
       }
@@ -277,7 +286,8 @@
         word-break: break-word;
       }
 
-      select, input[type="range"] {
+      select,
+      input[type="range"] {
         padding: 10px;
         border-radius: 8px;
         border: 1px solid #bdc3c7;
@@ -427,6 +437,7 @@
         border-radius: 50%;
         border-top-color: var(--success-color);
         animation: spin 1s ease-in-out infinite;
+        margin-right: 8px;
       }
 
       @keyframes spin {
@@ -487,11 +498,11 @@
         right: 20px;
         z-index: 1000;
         padding: 10px 15px;
-        background-color: #4CAF50;
+        background-color: #4caf50;
         color: white;
         border: none;
         border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         display: flex;
         align-items: center;
         gap: 8px;
@@ -558,7 +569,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>Local Language Speech to Text</h1>
+      <h1>Enhanced Speech-to-Text</h1>
 
       <div class="android-message" id="androidStatus" style="display: none">
         <strong>Android App Status:</strong>
@@ -567,20 +578,22 @@
 
       <div class="android-message" id="androidWarning" style="display: none">
         <strong>Note for Android Users:</strong> For best results with local
-        languages, use Chrome browser and ensure you have the language pack
-        installed.
+        languages, use Chrome browser.
       </div>
 
       <div class="status" id="status">
-        <span class="listening-indicator"></span>Auto-listening activated...
+        <span class="listening-indicator"></span>Initializing speech
+        recognition...
       </div>
 
       <div class="control-panel">
         <button id="toggleBtn">
           <svg class="icon" viewBox="0 0 24 24">
-            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7,9.5V14.5H12V9.5H7M16,9.5V14.5H17V9.5H16Z" />
+            <path
+              d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7,9.5V14.5H12V9.5H7M16,9.5V14.5H17V9.5H16Z"
+            />
           </svg>
-          Pause Listening
+          Start Listening
         </button>
         <button id="addNoteBtn">
           <svg class="icon" viewBox="0 0 24 24">
@@ -590,7 +603,9 @@
         </button>
         <button id="clearBtn">
           <svg class="icon" viewBox="0 0 24 24">
-            <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+            <path
+              d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"
+            />
           </svg>
           Clear All
         </button>
@@ -608,20 +623,29 @@
         </button>
         <button id="googleTranslateBtn">
           <svg class="icon" viewBox="0 0 24 24">
-            <path d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
+            <path
+              d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z"
+            />
           </svg>
           Google Translate
         </button>
         <button id="downloadAudioBtn" style="display: none">
           <svg class="icon" viewBox="0 0 24 24">
-            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z" />
+            <path
+              d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"
+            />
           </svg>
-          Download Recording
+          Download Audio
         </button>
       </div>
 
       <div class="transcript-container">
-        <div class="text-display" id="textDisplay" contenteditable="true" spellcheck="false">
+        <div
+          class="text-display"
+          id="textDisplay"
+          contenteditable="true"
+          spellcheck="false"
+        >
           Your transcribed text will appear here...
         </div>
 
@@ -666,15 +690,6 @@
             <option value="zh-CN">Chinese (简体中文)</option>
             <option value="zh-TW">Chinese (繁體中文)</option>
           </optgroup>
-          <optgroup label="Other Local Languages">
-            <option value="zu-ZA">Zulu</option>
-            <option value="xh-ZA">Xhosa</option>
-            <option value="af-ZA">Afrikaans</option>
-            <option value="ms-MY">Malay</option>
-            <option value="id-ID">Indonesian</option>
-            <option value="th-TH">Thai</option>
-            <option value="vi-VN">Vietnamese</option>
-          </optgroup>
         </select>
 
         <div class="confidence-indicator" id="confidenceIndicator">
@@ -685,7 +700,9 @@
       <div class="translation-panel">
         <button id="translateBtn">
           <svg class="icon" viewBox="0 0 24 24">
-            <path d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
+            <path
+              d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z"
+            />
           </svg>
           Translate Text
         </button>
@@ -728,13 +745,17 @@
         <div class="audio-panel">
           <button id="startMicBtn">
             <svg class="icon" viewBox="0 0 24 24">
-              <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+              <path
+                d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"
+              />
             </svg>
             Start Microphone
           </button>
           <button id="stopMicBtn" disabled>
             <svg class="icon" viewBox="0 0 24 24">
-              <path d="M19,11C19,13.78 17.58,16.23 15.43,17.67L14,16.24C15.81,15.08 17,13.14 17,11H19M12,16.5L13.5,18H10.5L12,16.5M13.33,12.3L14.37,13.34C14.64,12.97 14.84,12.54 14.95,12.08L13.33,10.46V12.3M12,4A7,7 0 0,1 19,11H17A5,5 0 0,0 12,6A5,5 0 0,0 7,11H5A7,7 0 0,1 12,4M9,11C9,12.66 10.34,14 12,14C13.66,14 15,12.66 15,11V5C15,3.34 13.66,2 12,2C10.34,2 9,3.34 9,5V11M6.67,10.46L5.05,12.08C5.16,12.54 5.36,12.97 5.63,13.34L6.67,12.3V10.46M20,4L18.5,5.5L20,7L21.5,5.5L20,4M4,4L2.5,5.5L4,7L5.5,5.5L4,4M12,19A1,1 0 0,1 13,20A1,1 0 0,1 12,21A1,1 0 0,1 11,20A1,1 0 0,1 12,19Z" />
+              <path
+                d="M19,11C19,13.78 17.58,16.23 15.43,17.67L14,16.24C15.81,15.08 17,13.14 17,11H19M12,16.5L13.5,18H10.5L12,16.5M13.33,12.3L14.37,13.34C14.64,12.97 14.84,12.54 14.95,12.08L13.33,10.46V12.3M12,4A7,7 0 0,1 19,11H17A5,5 0 0,0 12,6A5,5 0 0,0 7,11H5A7,7 0 0,1 12,4M9,11C9,12.66 10.34,14 12,14C13.66,14 15,12.66 15,11V5C15,3.34 13.66,2 12,2C10.34,2 9,3.34 9,5V11M6.67,10.46L5.05,12.08C5.16,12.54 5.36,12.97 5.63,13.34L6.67,12.3V10.46M20,4L18.5,5.5L20,7L21.5,5.5L20,4M4,4L2.5,5.5L4,7L5.5,5.5L4,4M12,19A1,1 0 0,1 13,20A1,1 0 0,1 12,21A1,1 0 0,1 11,20A1,1 0 0,1 12,19Z"
+              />
             </svg>
             Stop Microphone
           </button>
@@ -791,337 +812,96 @@
       const DB_VERSION = 2;
       const STORE_NAME = "notes";
       const rtlLanguages = [
-        "ar", "fa", "he", "ur", "ps", "ku", "sd", "dv", "yi", "ha"
+        "ar",
+        "fa",
+        "he",
+        "ur",
+        "ps",
+        "ku",
+        "sd",
+        "dv",
+        "yi",
+        "ha",
       ];
       const translationCache = new Map();
       const MAX_STORAGE_QUOTA = 5 * 1024 * 1024; // 5MB
 
-      // Audio processor worklet code
-      const audioProcessorWorkletCode = `
-        class AudioProcessor extends AudioWorkletProcessor {
-          process(inputs, outputs) {
-            const input = inputs[0];
-            const output = outputs[0];
-            
-            for (let channel = 0; channel < input.length; ++channel) {
-              output[channel].set(input[channel]);
-            }
-            
-            return true;
-          }
-        }
-        
-        registerProcessor('audio-processor', AudioProcessor);
-      `;
-
-      // ========== INITIALIZATION FUNCTIONS ==========
-      function isAndroid() {
-        return /Android/i.test(navigator.userAgent);
-      }
-
-      function isAndroidApp() {
-        const userAgent = navigator.userAgent;
-        return /Android/i.test(userAgent) && /wv|webview/i.test(userAgent);
-      }
-
-      function isIOS() {
-        return /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      }
-
-      function setupAndroidApp() {
-        if (!isAndroidApp()) return;
-
-        const androidStatus = document.getElementById("androidStatus");
-        const androidStatusText = document.getElementById("androidStatusText");
-        androidStatus.style.display = "block";
-
-        const hasRequiredFeatures =
-          "webkitSpeechRecognition" in window &&
-          "indexedDB" in window &&
-          "serviceWorker" in navigator;
-
-        if (!hasRequiredFeatures) {
-          androidStatusText.textContent = "WebView missing required features";
-          androidStatus.style.backgroundColor = "#ffebee";
-          return;
-        }
-
-        try {
-          androidStatusText.textContent = "Initializing for Android...";
-
-          if (window.AndroidInterface?.requestMicrophonePermission) {
-            window.AndroidInterface.requestMicrophonePermission()
-              .then(() => {
-                androidStatusText.textContent = "Microphone permission granted";
-                initRecognitionForAndroid();
-              })
-              .catch((err) => {
-                androidStatusText.textContent = "Microphone permission denied";
-                console.error("Android permission error:", err);
-              });
-          } else {
-            androidStatusText.textContent = "Using browser permissions";
-            initRecognitionForAndroid();
-          }
-        } catch (error) {
-          androidStatusText.textContent = `Initialization failed: ${error.message}`;
-          console.error("Android setup error:", error);
-        }
-      }
-
-      function initRecognitionForAndroid() {
-        const SpeechRecognition =
-          window.SpeechRecognition || window.webkitSpeechRecognition;
-
-        if (!SpeechRecognition) {
-          showAlert(
-            "Speech recognition not supported in this WebView",
-            "error"
-          );
-          return;
-        }
-
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.maxAlternatives = 1;
-        recognition.lang = document.getElementById("languageSelect").value;
-
-        if (navigator.userAgent.match(/Android\s([0-9\.]+)/)) {
-          const androidVersion = parseFloat(RegExp.$1);
-          if (androidVersion < 8) {
-            recognition.interimResults = false;
-          }
-        }
-
-        recognition.onerror = function (event) {
-          let errorMessage = "Recognition error";
-
-          switch (event.error) {
-            case "no-speech":
-              errorMessage = "No speech detected - try speaking louder";
-              break;
-            case "audio-capture":
-              errorMessage = "Microphone not available";
-              initAudioContext().then(() => recognition.start());
-              break;
-            case "not-allowed":
-              errorMessage = "Microphone access denied - check app permissions";
-              break;
-            default:
-              errorMessage = `Error: ${event.error}`;
-          }
-
-          showAlert(errorMessage, "error");
-
-          const retryDelay = Math.min(
-            5000,
-            (this.retryCount || 0) * 1000 + 1000
-          );
-          setTimeout(() => {
-            if (isAutoListening) {
-              this.retryCount = (this.retryCount || 0) + 1;
-              recognition.start();
-            }
-          }, retryDelay);
+      // Initialize the application
+      document.addEventListener("DOMContentLoaded", async function () {
+        // DOM elements
+        const elements = {
+          textDisplay: document.getElementById("textDisplay"),
+          notesList: document.getElementById("notesList"),
+          toggleBtn: document.getElementById("toggleBtn"),
+          addNoteBtn: document.getElementById("addNoteBtn"),
+          clearBtn: document.getElementById("clearBtn"),
+          exportBtn: document.getElementById("exportBtn"),
+          importBtn: document.getElementById("importBtn"),
+          googleTranslateBtn: document.getElementById("googleTranslateBtn"),
+          downloadAudioBtn: document.getElementById("downloadAudioBtn"),
+          status: document.getElementById("status"),
+          languageSelect: document.getElementById("languageSelect"),
+          translateBtn: document.getElementById("translateBtn"),
+          targetLanguage: document.getElementById("targetLanguage"),
+          translationResult: document.getElementById("translationResult"),
+          startMicBtn: document.getElementById("startMicBtn"),
+          stopMicBtn: document.getElementById("stopMicBtn"),
+          volumeControl: document.getElementById("volumeControl"),
+          audioVisualizer: document.getElementById("audioVisualizer"),
+          androidWarning: document.getElementById("androidWarning"),
+          audioInputSelect: document.getElementById("audioInputSelect"),
+          androidStatus: document.getElementById("androidStatus"),
+          androidStatusText: document.getElementById("androidStatusText"),
+          storageUsageProgress: document.getElementById("storageUsageProgress"),
         };
 
-        recognition.onresult = function (event) {
-          let interimTranscript = "";
-          let newFinalTranscript = "";
-          const isAndroidDevice = isAndroid();
+        // Initialize platform-specific features
+        initPlatformSpecificFeatures(elements);
 
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            const result = event.results[i];
-            const transcript = result[0].transcript;
-            const confidence = result[0].confidence || 0;
+        // Initialize database and load notes
+        await initDB();
+        loadNotesFromDB(elements.notesList);
 
-            if (result.isFinal) {
-              const trimmedTranscript = transcript.trim();
-              if (
-                !isAndroidDevice ||
-                !lastFinalTranscript.includes(trimmedTranscript)
-              ) {
-                newFinalTranscript += transcript + " ";
-                lastFinalTranscript = newFinalTranscript;
-              }
-            } else {
-              interimTranscript = transcript;
-            }
+        // Initialize speech recognition
+        initSpeechRecognition(elements);
 
-            if (confidence > lastConfidence) {
-              lastConfidence = confidence;
-              updateConfidenceIndicator(confidence);
-            }
+        // Set up event listeners
+        setupEventListeners(elements);
+
+        // Check online status
+        updateOnlineStatus();
+      });
+
+      // Platform-specific initialization
+      function initPlatformSpecificFeatures(elements) {
+        if (isAndroid()) {
+          elements.androidWarning.style.display = "block";
+          if (!/Chrome/i.test(navigator.userAgent)) {
+            elements.androidWarning.innerHTML +=
+              "<br><br><strong>Recommendation:</strong> Use Chrome for best results";
           }
+        }
 
-          if (newFinalTranscript) {
-            finalTranscript += newFinalTranscript;
-          }
-
-          updateTextDisplay(finalTranscript, interimTranscript);
-        };
-
-        recognition.onend = function () {
-          if (isAutoListening) {
-            const delay = isAndroid() ? 200 : 50;
-            setTimeout(() => {
-              try {
-                recognition.start();
-              } catch (e) {
-                console.log("Auto-restart failed, retrying...", e);
-                setTimeout(() => {
-                  if (isAutoListening) recognition.start();
-                }, delay * 2);
-              }
-            }, delay);
-          }
-        };
-
-        recognition.onstart = function () {
-          isListening = true;
-          document.getElementById("status").innerHTML =
-            '<span class="listening-indicator"></span>Listening... Speak now!';
-          document.getElementById("status").style.backgroundColor = "#e8f5e9";
-          document.getElementById("toggleBtn").textContent = "Pause Listening";
-          updateConfidenceIndicator(0);
-        };
-
-        setTimeout(() => {
-          try {
-            recognition.start();
-          } catch (e) {
-            console.error("Android recognition start error:", e);
-            setTimeout(() => recognition.start(), 1000);
-          }
-        }, 300);
-      }
-
-      // ========== CORE FUNCTIONS ==========
-      async function initAudioContext() {
-        try {
-          if (audioContext?.state === "suspended") {
-            await audioContext.resume();
-            return true;
-          }
-
-          audioContext = new (window.AudioContext || window.webkitAudioContext)({
-            latencyHint: "interactive",
-            sampleRate: 16000,
-          });
-
-          if (isAndroid()) {
-            const buffer = audioContext.createBuffer(
-              1,
-              1,
-              audioContext.sampleRate
-            );
-            const source = audioContext.createBufferSource();
-            source.buffer = buffer;
-            source.connect(audioContext.destination);
-            source.start(0);
-
-            setTimeout(() => {
-              if (audioContext.state === "suspended") {
-                audioContext.resume();
-              }
-            }, 200);
-          }
-
-          return true;
-        } catch (error) {
-          console.error("Audio context error:", error);
-          showAlert("Audio initialization failed", "error");
-          return false;
+        if (isIOS()) {
+          const iosMessage = document.createElement("div");
+          iosMessage.className = "info-message";
+          iosMessage.innerHTML =
+            "<strong>iOS Users:</strong> Use Safari for best results";
+          document
+            .querySelector(".container")
+            .insertBefore(iosMessage, elements.status);
         }
       }
 
-      function updateTextDisplay(final, interim) {
-        if ("requestIdleCallback" in window) {
-          requestIdleCallback(
-            () => updateTextDisplayImmediately(final, interim),
-            { timeout: 100 }
-          );
-        } else {
-          requestAnimationFrame(() =>
-            updateTextDisplayImmediately(final, interim)
-          );
-        }
-      }
-
-      function updateTextDisplayImmediately(final, interim) {
-        const textDisplay = document.getElementById("textDisplay");
-        if (!final && !interim) return;
-
-        const newContent =
-          final +
-          (interim ? '<span style="color:#aaa;">' + interim + "</span>" : "");
-
-        if (!interim) {
-          textDisplay.textContent = newContent;
-        } else {
-          textDisplay.innerHTML = newContent;
-        }
-
-        applyTextDirection(
-          textDisplay,
-          document.getElementById("languageSelect").value
-        );
-      }
-
-      function applyTextDirection(element, languageCode) {
-        const baseLang = languageCode.split("-")[0];
-        if (rtlLanguages.includes(baseLang)) {
-          element.classList.add("rtl-text");
-        } else {
-          element.classList.remove("rtl-text");
-        }
-      }
-
-      function updateConfidenceIndicator(confidence) {
-        const confidenceLevel = document.getElementById("confidenceLevel");
-        if (confidenceLevel) {
-          const percentage = Math.round(confidence * 100);
-          confidenceLevel.style.width = `${percentage}%`;
-
-          if (percentage > 80) {
-            confidenceLevel.style.backgroundColor = "var(--success-color)";
-          } else if (percentage > 50) {
-            confidenceLevel.style.backgroundColor = "var(--warning-color)";
-          } else {
-            confidenceLevel.style.backgroundColor = "var(--danger-color)";
-          }
-        }
-      }
-
-      function showAlert(message, type = "info") {
-        const colors = {
-          info: "#3498db",
-          warning: "#f39c12",
-          error: "#e74c3c",
-          success: "#2ecc71",
-        };
-
-        const alertDiv = document.createElement("div");
-        alertDiv.className = `alert alert-${type}`;
-        alertDiv.textContent = message;
-
-        document.body.appendChild(alertDiv);
-
-        setTimeout(() => {
-          alertDiv.style.opacity = "0";
-          setTimeout(() => document.body.removeChild(alertDiv), 300);
-        }, 3000);
-      }
-
-      // ========== DATABASE FUNCTIONS ==========
-      function initDB() {
+      // Database functions
+      async function initDB() {
         return new Promise((resolve, reject) => {
           const request = indexedDB.open(DB_NAME, DB_VERSION);
 
           request.onerror = (event) => {
             console.error("Database error:", event.target.error);
-            reject("Database error.");
+            showAlert("Failed to initialize database", "error");
+            reject(event.target.error);
           };
 
           request.onupgradeneeded = (event) => {
@@ -1144,30 +924,19 @@
         });
       }
 
-      async function saveNoteToDB(text, language) {
-        if (!db) await initDB();
-
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction([STORE_NAME], "readwrite");
-          const store = transaction.objectStore(STORE_NAME);
-
-          const request = store.add({
-            text: text,
-            language: language,
-            timestamp: new Date().toISOString(),
+      async function loadNotesFromDB(notesList) {
+        try {
+          const notes = await getAllNotesFromDB();
+          notes.forEach((note) => {
+            addNoteToUI(note.text, note.id, note.language, notesList);
           });
-
-          request.onsuccess = () => {
-            updateStorageUsage();
-            resolve(request.result);
-          };
-          request.onerror = (event) => reject(event.target.error);
-        });
+        } catch (error) {
+          console.error("Failed to load notes:", error);
+          showAlert("Failed to load notes from storage", "error");
+        }
       }
 
       async function getAllNotesFromDB() {
-        if (!db) await initDB();
-
         return new Promise((resolve, reject) => {
           const transaction = db.transaction([STORE_NAME], "readonly");
           const store = transaction.objectStore(STORE_NAME);
@@ -1178,9 +947,28 @@
         });
       }
 
-      async function deleteNoteFromDB(id) {
-        if (!db) await initDB();
+      async function saveNoteToDB(text, language) {
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction([STORE_NAME], "readwrite");
+          const store = transaction.objectStore(STORE_NAME);
 
+          const note = {
+            text: text,
+            language: language,
+            timestamp: new Date().toISOString(),
+          };
+
+          const request = store.add(note);
+
+          request.onsuccess = () => {
+            updateStorageUsage();
+            resolve(request.result);
+          };
+          request.onerror = (event) => reject(event.target.error);
+        });
+      }
+
+      async function deleteNoteFromDB(id) {
         return new Promise((resolve, reject) => {
           const transaction = db.transaction([STORE_NAME], "readwrite");
           const store = transaction.objectStore(STORE_NAME);
@@ -1195,8 +983,6 @@
       }
 
       async function clearAllNotesFromDB() {
-        if (!db) await initDB();
-
         return new Promise((resolve, reject) => {
           const transaction = db.transaction([STORE_NAME], "readwrite");
           const store = transaction.objectStore(STORE_NAME);
@@ -1212,19 +998,25 @@
 
       async function updateStorageUsage() {
         if (!db) return;
-        
+
         try {
           const notes = await getAllNotesFromDB();
           const totalSize = JSON.stringify(notes).length;
-          const percentage = Math.min(100, (totalSize / MAX_STORAGE_QUOTA) * 100);
-          
+          const percentage = Math.min(
+            100,
+            (totalSize / MAX_STORAGE_QUOTA) * 100
+          );
+
           const progressBar = document.getElementById("storageUsageProgress");
           if (progressBar) {
             progressBar.style.width = `${percentage}%`;
-            
+
             if (percentage > 90) {
               progressBar.style.backgroundColor = "var(--danger-color)";
-              showAlert("Storage almost full - consider exporting notes", "warning");
+              showAlert(
+                "Storage almost full - consider exporting notes",
+                "warning"
+              );
             } else if (percentage > 70) {
               progressBar.style.backgroundColor = "var(--warning-color)";
             } else {
@@ -1236,137 +1028,444 @@
         }
       }
 
-      // ========== EXPORT/IMPORT FUNCTIONS ==========
-      async function exportAsDocx(notes) {
-        try {
-          const { default: docx } = await import(
-            "https://cdn.jsdelivr.net/npm/docx@7.8.2/+esm"
-          );
-          const { Document, Paragraph, TextRun, Packer } = docx;
+      // Speech recognition functions
+      function initSpeechRecognition(elements) {
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          elements.status.innerHTML =
+            '<span style="color:red;">Speech recognition not supported in your browser</span>';
+          elements.toggleBtn.disabled = true;
+          elements.addNoteBtn.disabled = true;
+          return;
+        }
 
-          const doc = new Document({
-            sections: [
-              {
-                properties: {},
-                children: [
-                  new Paragraph({
-                    children: [
-                      new TextRun({
-                        text: "Speech to Text Notes Export",
-                        bold: true,
-                        size: 28,
-                      }),
-                    ],
-                  }),
-                  new Paragraph({
-                    children: [
-                      new TextRun({
-                        text: `Exported on: ${new Date().toLocaleString()}`,
-                        size: 22,
-                        color: "666666",
-                      }),
-                    ],
-                  }),
-                  new Paragraph({ text: "" }),
-                  ...notes.flatMap((note) => [
-                    new Paragraph({
-                      children: [
-                        new TextRun({
-                          text: note.text,
-                          size: 24,
-                          rightToLeft: rtlLanguages.includes(
-                            note.language?.split("-")[0]
-                          ),
-                        }),
-                      ],
-                    }),
-                    new Paragraph({ text: "" }),
-                  ]),
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+        recognition.lang = elements.languageSelect.value;
+
+        recognition.onresult = (event) => {
+          let interimTranscript = "";
+          let newFinalTranscript = "";
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const result = event.results[i];
+            const transcript = result[0].transcript;
+            const confidence = result[0].confidence || 0;
+
+            if (result.isFinal) {
+              newFinalTranscript += transcript + " ";
+              lastFinalTranscript = newFinalTranscript;
+            } else {
+              interimTranscript = transcript;
+            }
+
+            if (confidence > lastConfidence) {
+              lastConfidence = confidence;
+              updateConfidenceIndicator(confidence, elements.confidenceLevel);
+            }
+          }
+
+          if (newFinalTranscript) {
+            finalTranscript += newFinalTranscript;
+          }
+
+          updateTextDisplay(
+            finalTranscript,
+            interimTranscript,
+            elements.textDisplay,
+            elements.languageSelect.value
+          );
+        };
+
+        recognition.onerror = (event) => {
+          console.error("Recognition error:", event.error);
+          isListening = false;
+
+          let errorMessage = "Error occurred in recognition";
+          switch (event.error) {
+            case "no-speech":
+              errorMessage = "No speech detected";
+              break;
+            case "audio-capture":
+              errorMessage = "Microphone not available";
+              break;
+            case "not-allowed":
+              errorMessage = "Microphone access denied";
+              break;
+            case "language-not-supported":
+              errorMessage = "Language not supported";
+              break;
+          }
+
+          elements.status.innerHTML = `<span style="color:red;">${errorMessage}</span>`;
+          elements.status.style.backgroundColor = "#ffebee";
+          elements.toggleBtn.textContent = "Start Listening";
+
+          setTimeout(() => {
+            if (isAutoListening) recognition.start();
+          }, 1000);
+        };
+
+        recognition.onstart = () => {
+          isListening = true;
+          elements.status.innerHTML =
+            '<span class="listening-indicator"></span>Listening... Speak now!';
+          elements.status.style.backgroundColor = "#e8f5e9";
+          elements.toggleBtn.textContent = "Pause Listening";
+          updateConfidenceIndicator(0, elements.confidenceLevel);
+        };
+
+        recognition.onend = () => {
+          if (isAutoListening) {
+            setTimeout(() => {
+              try {
+                recognition.start();
+              } catch (e) {
+                console.log("Auto-restart failed, retrying...", e);
+                setTimeout(() => isAutoListening && recognition.start(), 300);
+              }
+            }, 100);
+          }
+        };
+
+        // Start initial listening if online
+        if (navigator.onLine) {
+          setTimeout(() => recognition.start(), 300);
+        }
+      }
+
+      // UI update functions
+      function updateTextDisplay(final, interim, textDisplay, language) {
+        if ("requestIdleCallback" in window) {
+          requestIdleCallback(
+            () =>
+              updateTextDisplayImmediately(
+                final,
+                interim,
+                textDisplay,
+                language
+              ),
+            { timeout: 100 }
+          );
+        } else {
+          updateTextDisplayImmediately(final, interim, textDisplay, language);
+        }
+      }
+
+      function updateTextDisplayImmediately(
+        final,
+        interim,
+        textDisplay,
+        language
+      ) {
+        if (!final && !interim) return;
+
+        const newContent =
+          final +
+          (interim ? '<span style="color:#aaa;">' + interim + "</span>" : "");
+
+        if (!interim) {
+          textDisplay.textContent = newContent;
+        } else {
+          textDisplay.innerHTML = newContent;
+        }
+
+        applyTextDirection(textDisplay, language);
+      }
+
+      function applyTextDirection(element, languageCode) {
+        const baseLang = languageCode.split("-")[0];
+        if (rtlLanguages.includes(baseLang)) {
+          element.classList.add("rtl-text");
+        } else {
+          element.classList.remove("rtl-text");
+        }
+      }
+
+      function updateConfidenceIndicator(confidence, confidenceLevel) {
+        if (!confidenceLevel) return;
+
+        const percentage = Math.round(confidence * 100);
+        confidenceLevel.style.width = `${percentage}%`;
+
+        if (percentage > 80) {
+          confidenceLevel.style.backgroundColor = "var(--success-color)";
+        } else if (percentage > 50) {
+          confidenceLevel.style.backgroundColor = "var(--warning-color)";
+        } else {
+          confidenceLevel.style.backgroundColor = "var(--danger-color)";
+        }
+      }
+
+      function addNoteToUI(text, id, language, notesList) {
+        const noteItem = document.createElement("li");
+        noteItem.className = "note-item";
+        noteItem.dataset.id = id || Date.now();
+
+        const noteText = document.createElement("span");
+        noteText.textContent = text;
+
+        if (language) {
+          const baseLang = language.split("-")[0];
+          if (rtlLanguages.includes(baseLang)) {
+            noteItem.classList.add("rtl-text");
+          }
+        }
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-note";
+        deleteBtn.innerHTML = "×";
+        deleteBtn.addEventListener("click", async () => {
+          if (confirm("Delete this note?")) {
+            noteItem.remove();
+            if (id) {
+              try {
+                await deleteNoteFromDB(id);
+                showAlert("Note deleted", "success");
+              } catch (error) {
+                console.error("Failed to delete note:", error);
+                showAlert("Failed to delete note from storage", "error");
+              }
+            }
+          }
+        });
+
+        // Touch events for mobile
+        noteItem.addEventListener(
+          "touchstart",
+          (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            noteItem.classList.add("swiping");
+          },
+          { passive: true }
+        );
+
+        noteItem.addEventListener(
+          "touchmove",
+          (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (diff > 30) {
+              noteItem.style.transform = `translateX(${-diff}px)`;
+              if (diff > 100) {
+                deleteBtn.style.opacity = "1";
+              }
+            }
+          },
+          { passive: true }
+        );
+
+        noteItem.addEventListener(
+          "touchend",
+          () => {
+            noteItem.classList.remove("swiping");
+            const diff = touchStartX - touchEndX;
+            if (diff > 100) {
+              deleteBtn.click();
+            } else {
+              noteItem.style.transform = "";
+            }
+          },
+          { passive: true }
+        );
+
+        noteItem.appendChild(noteText);
+        noteItem.appendChild(deleteBtn);
+        notesList.appendChild(noteItem);
+        noteItem.scrollIntoView({ behavior: "smooth" });
+      }
+
+      // Audio functions
+      async function startMicrophone(elements) {
+        try {
+          // Stop existing microphone if active
+          if (isMicActive) {
+            stopMicrophone();
+          }
+
+          // Initialize audio context
+          if (!audioContext) {
+            audioContext = new (window.AudioContext ||
+              window.webkitAudioContext)({
+              latencyHint: "interactive",
+              sampleRate: 16000,
+            });
+          }
+
+          // Get selected device
+          const deviceId =
+            elements.audioInputSelect.value === "default"
+              ? undefined
+              : elements.audioInputSelect.value;
+
+          // Get user media
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              deviceId: deviceId,
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+              channelCount: 1,
+            },
+            video: false,
+          });
+
+          // Create audio nodes
+          gainNode = audioContext.createGain();
+          gainNode.gain.value = elements.volumeControl.value;
+
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 256;
+
+          // Connect nodes
+          microphone = audioContext.createMediaStreamSource(stream);
+
+          if (audioContext.createAudioWorklet) {
+            try {
+              const blob = new Blob(
+                [
+                  `
+              class AudioProcessor extends AudioWorkletProcessor {
+                process(inputs, outputs) {
+                  const input = inputs[0];
+                  const output = outputs[0];
+                  for (let channel = 0; channel < input.length; ++channel) {
+                    output[channel].set(input[channel]);
+                  }
+                  return true;
+                }
+              }
+              registerProcessor('audio-processor', AudioProcessor);
+            `,
                 ],
-              },
-            ],
-          });
+                { type: "application/javascript" }
+              );
 
-          const blob = await Packer.toBlob(doc);
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `speech-notes-${new Date().toISOString().split('T')[0]}.docx`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
+              const url = URL.createObjectURL(blob);
+              await audioContext.audioWorklet.addModule(url);
+              const workletNode = new AudioWorkletNode(
+                audioContext,
+                "audio-processor"
+              );
+              microphone.connect(workletNode).connect(analyser);
+            } catch (e) {
+              console.warn(
+                "AudioWorklet not available, using script processor"
+              );
+              const scriptNode = audioContext.createScriptProcessor(4096, 1, 1);
+              microphone.connect(scriptNode).connect(analyser);
+            }
+          } else {
+            microphone.connect(gainNode).connect(analyser);
+          }
+
+          analyser.connect(audioContext.destination);
+
+          // Setup visualization
+          setupVisualizer(elements.audioVisualizer);
+
+          // Setup recording
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) audioChunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+            audioUrl = URL.createObjectURL(audioBlob);
+            elements.downloadAudioBtn.style.display = "block";
+          };
+
+          mediaRecorder.start(100);
+          isMicActive = true;
+
+          // Update UI
+          elements.startMicBtn.disabled = true;
+          elements.stopMicBtn.disabled = false;
+          elements.status.innerHTML =
+            '<span class="listening-indicator"></span>Microphone active';
         } catch (error) {
-          console.error("Error generating Word document:", error);
-          showAlert("Failed to export as Word document.", "error");
+          console.error("Microphone error:", error);
+          showAlert("Microphone access denied or unavailable", "error");
         }
       }
 
-      async function exportAsTxt(notes) {
-        try {
-          const textContent = notes.map((note) => note.text).join("\n\n");
-          const blob = new Blob([textContent], { type: "text/plain" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `speech-notes-${new Date().toISOString().split('T')[0]}.txt`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        } catch (error) {
-          console.error("Error generating TXT file:", error);
-          showAlert("Failed to export as TXT file.", "error");
+      function stopMicrophone() {
+        if (!isMicActive) return;
+
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
         }
+
+        if (microphone) microphone.disconnect();
+        if (gainNode) gainNode.disconnect();
+        if (analyser) analyser.disconnect();
+
+        isMicActive = false;
       }
 
-      async function importDocxFile(file) {
-        try {
-          const { default: mammoth } = await import(
-            "https://cdn.jsdelivr.net/npm/mammoth@1.4.0/+esm"
-          );
+      function setupVisualizer(audioVisualizer) {
+        const canvas = document.createElement("canvas");
+        canvas.width = audioVisualizer.offsetWidth;
+        canvas.height = audioVisualizer.offsetHeight;
+        audioVisualizer.innerHTML = "";
+        audioVisualizer.appendChild(canvas);
 
-          const arrayBuffer = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (event) => resolve(event.target.result);
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(file);
-          });
+        const canvasCtx = canvas.getContext("2d");
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        let animationId;
 
-          const result = await mammoth.extractRawText({ arrayBuffer });
-          const text = result.value;
+        function draw() {
+          if (!isMicActive) {
+            cancelAnimationFrame(animationId);
+            return;
+          }
 
-          return text
-            .split("\n")
-            .map((line) => line.trim())
-            .filter((line) => line.length > 0)
-            .map((line) => ({ text: line }));
-        } catch (error) {
-          console.error("Error reading Word document:", error);
-          throw new Error("Could not read Word document.");
+          animationId = requestAnimationFrame(draw);
+          analyser.getByteFrequencyData(dataArray);
+
+          canvasCtx.fillStyle = "rgb(200, 200, 200)";
+          canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+          const barWidth = (canvas.width / bufferLength) * 2.5;
+          let x = 0;
+
+          for (let i = 0; i < bufferLength; i++) {
+            const barHeight = dataArray[i] / 2;
+            const hue = (i / bufferLength) * 360;
+
+            canvasCtx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+            canvasCtx.fillRect(
+              x,
+              canvas.height - barHeight,
+              barWidth,
+              barHeight
+            );
+
+            x += barWidth + 1;
+          }
         }
+
+        draw();
       }
 
-      // ========== TRANSLATION FUNCTIONS ==========
+      // Translation functions
       async function translateText(text, targetLang) {
-        if (!text?.trim()) {
-          console.error("Invalid text for translation");
-          return "";
-        }
+        if (!text?.trim()) return "";
 
         // Check cache first
         const cacheKey = `${text}-${targetLang}`;
         if (translationCache.has(cacheKey)) {
           return translationCache.get(cacheKey);
-        }
-
-        // Validate target language
-        const validLangs = [
-          ...document.getElementById("targetLanguage").options,
-        ].map((opt) => opt.value);
-        if (!validLangs.includes(targetLang)) {
-          console.error(`Invalid target language: ${targetLang}`);
-          return text;
         }
 
         try {
@@ -1385,14 +1484,10 @@
           }
 
           // Final fallback
-          const fallback = localFallbackTranslation(text, targetLang);
-          translationCache.set(cacheKey, fallback);
-          return fallback;
+          return localFallbackTranslation(text, targetLang);
         } catch (error) {
           console.error("Translation error:", error);
-          const fallback = localFallbackTranslation(text, targetLang);
-          translationCache.set(cacheKey, fallback);
-          return fallback;
+          return localFallbackTranslation(text, targetLang);
         }
       }
 
@@ -1407,16 +1502,13 @@
               target: targetLang,
               format: "text",
             }),
-            timeout: 5000,
           });
 
-          if (!response.ok)
-            throw new Error(`HTTP error! status: ${response.status}`);
-
+          if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
           const data = await response.json();
-          return data.translatedText || null;
+          return data.translatedText;
         } catch (error) {
-          console.warn("LibreTranslate failed:", error.message);
+          console.warn("LibreTranslate failed:", error);
           return null;
         }
       }
@@ -1436,7 +1528,7 @@
 
           return translatedChunks.join(" ");
         } catch (error) {
-          console.warn("MyMemory translation failed:", error.message);
+          console.warn("MyMemory failed:", error);
           return null;
         }
       }
@@ -1448,59 +1540,16 @@
           )}&langpair=auto|${targetLang}`
         );
 
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
-
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
         const data = await response.json();
         return data.responseData?.translatedText || chunk;
       }
 
       function localFallbackTranslation(text, targetLang) {
         const translations = {
-          en: {
-            hello: "hello",
-            "thank you": "thank you",
-            goodbye: "goodbye",
-            "how are you": "how are you",
-            "what is your name": "what is your name",
-            yes: "yes",
-            no: "no",
-            please: "please",
-            help: "help",
-          },
-          es: {
-            hello: "hola",
-            "thank you": "gracias",
-            goodbye: "adiós",
-            "how are you": "cómo estás",
-            "what is your name": "cómo te llamas",
-            yes: "sí",
-            no: "no",
-            please: "por favor",
-            help: "ayuda",
-          },
-          so: {
-            hello: "salaam",
-            "thank you": "mahadsanid",
-            goodbye: "nabad gelyo",
-            "how are you": "sidee tahay",
-            "what is your name": "magacaa",
-            yes: "haa",
-            no: "maya",
-            please: "fadlan",
-            help: "caawi",
-          },
-          fr: {
-            hello: "bonjour",
-            "thank you": "merci",
-            goodbye: "au revoir",
-            "how are you": "comment ça va",
-            "what is your name": "comment tu t'appelles",
-            yes: "oui",
-            no: "non",
-            please: "s'il vous plaît",
-            help: "aider",
-          },
+          en: { hello: "hello", "thank you": "thank you" },
+          es: { hello: "hola", "thank you": "gracias" },
+          so: { hello: "salaam", "thank you": "mahadsanid" },
         };
 
         const langCode = targetLang.split("-")[0];
@@ -1508,14 +1557,6 @@
 
         if (translations[langCode]?.[lowerText]) {
           return translations[langCode][lowerText];
-        }
-
-        const words = lowerText.split(/\s+/);
-        if (words.length <= 3) {
-          const translated = words
-            .map((word) => translations[langCode]?.[word] || word)
-            .join(" ");
-          if (translated !== lowerText) return translated;
         }
 
         return `${text} [Translation failed for ${targetLang}]`;
@@ -1550,345 +1591,416 @@
         const sourceCode = langMap[sourceLang.split("-")[0]] || "auto";
         const targetCode = langMap[targetLang] || "en";
 
-        const url = `https://translate.google.com/?sl=${sourceCode}&tl=${targetCode}&text=${encodeURIComponent(
-          text
-        )}&op=translate`;
-        window.open(url, "_blank");
+        window.open(
+          `https://translate.google.com/?sl=${sourceCode}&tl=${targetCode}&text=${encodeURIComponent(
+            text
+          )}&op=translate`,
+          "_blank"
+        );
       }
 
-      // ========== MAIN INITIALIZATION ==========
-      document.addEventListener("DOMContentLoaded", async function () {
-        const textDisplay = document.getElementById("textDisplay");
-        const notesList = document.getElementById("notesList");
-        const toggleBtn = document.getElementById("toggleBtn");
-        const addNoteBtn = document.getElementById("addNoteBtn");
-        const clearBtn = document.getElementById("clearBtn");
-        const exportBtn = document.getElementById("exportBtn");
-        const importBtn = document.getElementById("importBtn");
-        const googleTranslateBtn = document.getElementById("googleTranslateBtn");
-        const downloadAudioBtn = document.getElementById("downloadAudioBtn");
-        const status = document.getElementById("status");
-        const languageSelect = document.getElementById("languageSelect");
-        const translateBtn = document.getElementById("translateBtn");
-        const targetLanguage = document.getElementById("targetLanguage");
-        const translationResult = document.getElementById("translationResult");
-        const startMicBtn = document.getElementById("startMicBtn");
-        const stopMicBtn = document.getElementById("stopMicBtn");
-        const volumeControl = document.getElementById("volumeControl");
-        const audioVisualizer = document.getElementById("audioVisualizer");
-        const androidWarning = document.getElementById("androidWarning");
-        const audioInputSelect = document.getElementById("audioInputSelect");
-        const androidStatus = document.getElementById("androidStatus");
-        const androidStatusText = document.getElementById("androidStatusText");
+      // Utility functions
+      function showAlert(message, type = "info") {
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
 
-        // Auto-save draft functionality
+        setTimeout(() => {
+          alertDiv.style.opacity = "0";
+          setTimeout(() => alertDiv.remove(), 300);
+        }, 3000);
+      }
+
+      function updateOnlineStatus() {
+        const offlineIndicator = document.getElementById("offlineIndicator");
+        if (navigator.onLine) {
+          offlineIndicator.style.display = "none";
+        } else {
+          offlineIndicator.style.display = "block";
+        }
+      }
+
+      function isAndroid() {
+        return /Android/i.test(navigator.userAgent);
+      }
+
+      function isIOS() {
+        return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      }
+
+      // Event listener setup
+      function setupEventListeners(elements) {
+        // Auto-save draft
         let draftTimer;
-        textDisplay.addEventListener("input", () => {
+        elements.textDisplay.addEventListener("input", () => {
           clearTimeout(draftTimer);
           draftTimer = setTimeout(() => {
-            localStorage.setItem("speechDraft", textDisplay.textContent);
+            localStorage.setItem(
+              "speechDraft",
+              elements.textDisplay.textContent
+            );
           }, 5000);
         });
 
         // Restore draft on load
-        window.addEventListener("load", () => {
-          const draft = localStorage.getItem("speechDraft");
-          if (draft) {
-            textDisplay.textContent = draft;
-            showAlert("Restored unsaved draft", "success");
+        const draft = localStorage.getItem("speechDraft");
+        if (draft) {
+          elements.textDisplay.textContent = draft;
+          showAlert("Restored unsaved draft", "success");
+        }
+
+        // Toggle listening
+        elements.toggleBtn.addEventListener("click", function () {
+          this.disabled = true;
+
+          if (isListening) {
+            isAutoListening = false;
+            recognition.stop();
+            isListening = false;
+            this.textContent = "Start Listening";
+            elements.status.textContent = "Listening paused.";
+          } else {
+            isAutoListening = true;
+            recognition.lang = elements.languageSelect.value;
+            recognition.start();
+          }
+
+          setTimeout(() => (this.disabled = false), 300);
+        });
+
+        // Add note
+        elements.addNoteBtn.addEventListener("click", async () => {
+          const text = elements.textDisplay.textContent.trim();
+          if (!text || text === "Your transcribed text will appear here...") {
+            showAlert("No text to save as note", "warning");
+            return;
+          }
+
+          const language = elements.languageSelect.value;
+          try {
+            const noteId = await saveNoteToDB(text, language);
+            addNoteToUI(text, noteId, language, elements.notesList);
+            elements.textDisplay.textContent = "";
+            finalTranscript = "";
+            localStorage.removeItem("speechDraft");
+            showAlert("Note saved", "success");
+          } catch (error) {
+            console.error("Save failed:", error);
+            addNoteToUI(text, null, language, elements.notesList);
+            elements.textDisplay.textContent = "";
+            finalTranscript = "";
+            localStorage.removeItem("speechDraft");
+            showAlert("Note saved locally (not synced)", "warning");
           }
         });
 
-        // Show Android-specific instructions
-        if (isAndroid()) {
-          androidWarning.style.display = "block";
-          if (!/Chrome/i.test(navigator.userAgent)) {
-            androidWarning.innerHTML +=
-              "<br><br><strong>Recommendation:</strong> For best local language support, please use Google Chrome browser.";
+        // Clear all
+        elements.clearBtn.addEventListener("click", async () => {
+          if (confirm("Clear all notes? This cannot be undone.")) {
+            elements.textDisplay.textContent = "";
+            elements.notesList.innerHTML = "";
+            finalTranscript = "";
+
+            try {
+              await clearAllNotesFromDB();
+              localStorage.removeItem("speechDraft");
+              showAlert("All notes cleared", "success");
+            } catch (error) {
+              console.error("Clear failed:", error);
+              showAlert("Failed to clear notes from storage", "error");
+            }
           }
+        });
 
-          const androidTips = document.createElement("div");
-          androidTips.className = "android-message";
-          androidTips.innerHTML = `
-            <strong>Android Tips:</strong>
-            <ul>
-              <li>Hold device closer when speaking for better accuracy</li>
-              <li>Use headphones with microphone in noisy environments</li>
-              <li>Close other apps to free up system resources</li>
-            </ul>
+        // Export notes
+        elements.exportBtn.addEventListener("click", async () => {
+          try {
+            const notes = await getAllNotesFromDB();
+            if (notes.length === 0) {
+              showAlert("No notes to export", "warning");
+              return;
+            }
+
+            const exportDialog = document.createElement("div");
+            exportDialog.className = "export-dialog";
+            exportDialog.innerHTML = `
+            <h3>Export Options</h3>
+            <button id="exportDocx">Export as Word (.docx)</button>
+            <button id="exportTxt">Export as Text (.txt)</button>
+            <button id="exportCancel">Cancel</button>
           `;
-          document
-            .querySelector(".container")
-            .insertBefore(androidTips, document.querySelector(".status"));
-        } else {
-          androidWarning.style.display = "none";
-        }
 
-        // Show iOS-specific instructions
-        if (isIOS()) {
-          const iosMessage = document.createElement("div");
-          iosMessage.className = "info-message";
-          iosMessage.innerHTML = `
-            <strong>iOS Users:</strong> For best results, use Safari browser and ensure microphone permissions are granted.
-          `;
-          document
-            .querySelector(".container")
-            .insertBefore(iosMessage, document.querySelector(".status"));
-        }
+            document.body.appendChild(exportDialog);
 
-        // Initialize database.
-        try {
-          await initDB();
-          // Load existing notes.
-          const notes = await getAllNotesFromDB();
-          notes.forEach((note) => {
-            addNoteToUI(note.text, note.id, note.language);
-          });
-        } catch (error) {
-          console.error("Failed to initialize database:", error);
-          showAlert("Failed to load notes from storage", "error");
-        }
+            document
+              .getElementById("exportDocx")
+              .addEventListener("click", async () => {
+                await exportAsDocx(notes);
+                exportDialog.remove();
+              });
 
-        // Check for browser support.
-        if (
-          !("webkitSpeechRecognition" in window) &&
-          !("SpeechRecognition" in window)
-        ) {
-          status.innerHTML =
-            '<span style="color:red;">Speech recognition not supported in your browser. Try Chrome or Edge.</span>';
-          toggleBtn.disabled = true;
-          addNoteBtn.disabled = true;
-          return;
-        }
+            document
+              .getElementById("exportTxt")
+              .addEventListener("click", async () => {
+                await exportAsTxt(notes);
+                exportDialog.remove();
+              });
 
-        // Initialize recognition differently for Android
-        if (isAndroidApp()) {
-          setupAndroidApp();
-        } else {
-          // Standard initialization for non-Android
-          const SpeechRecognition =
-            window.SpeechRecognition || window.webkitSpeechRecognition;
-          recognition = new SpeechRecognition();
+            document
+              .getElementById("exportCancel")
+              .addEventListener("click", () => {
+                exportDialog.remove();
+              });
+          } catch (error) {
+            console.error("Export failed:", error);
+            showAlert("Failed to export notes", "error");
+          }
+        });
 
-          recognition.continuous = true;
-          recognition.interimResults = true;
-          recognition.maxAlternatives = 1;
-          recognition.lang = languageSelect.value;
-
-          recognition.onresult = function (event) {
-            let interimTranscript = "";
-            let newFinalTranscript = "";
-
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-              const result = event.results[i];
-              const transcript = result[0].transcript;
-              const confidence = result[0].confidence || 0;
-
-              if (result.isFinal) {
-                newFinalTranscript += transcript + " ";
-                lastFinalTranscript = newFinalTranscript;
-              } else {
-                interimTranscript = transcript;
-              }
-
-              if (confidence > lastConfidence) {
-                lastConfidence = confidence;
-                updateConfidenceIndicator(confidence);
-              }
-            }
-
-            if (newFinalTranscript) {
-              finalTranscript += newFinalTranscript;
-            }
-
-            updateTextDisplay(finalTranscript, interimTranscript);
-          };
-
-          recognition.onend = function () {
-            if (isAutoListening) {
-              setTimeout(() => {
-                try {
-                  recognition.start();
-                } catch (e) {
-                  console.log("Auto-restart failed, retrying...", e);
-                  setTimeout(() => {
-                    if (isAutoListening) recognition.start();
-                  }, 100);
-                }
-              }, 50);
-            }
-          };
-
-          recognition.onstart = function () {
-            isListening = true;
-            status.innerHTML =
-              '<span class="listening-indicator"></span>Listening... Speak now!';
-            status.style.backgroundColor = "#e8f5e9";
-            toggleBtn.textContent = "Pause Listening";
-            updateConfidenceIndicator(0);
-          };
-
-          recognition.onerror = function (event) {
-            console.error("Recognition error:", event.error);
-            isListening = false;
-
-            let errorMessage = "Error occurred.";
-            switch (event.error) {
-              case "no-speech":
-                errorMessage = "No speech detected.";
-                break;
-              case "audio-capture":
-                errorMessage = "Microphone not available.";
-                break;
-              case "not-allowed":
-                errorMessage = "Microphone access denied.";
-                break;
-              case "service-not-allowed":
-                errorMessage = "Speech recognition service not allowed.";
-                break;
-              case "network":
-                errorMessage = "Network error occurred.";
-                break;
-              case "language-not-supported":
-                errorMessage =
-                  "Selected language not supported on this device.";
-                break;
-              default:
-                errorMessage = `Error: ${event.error}`;
-            }
-
-            status.innerHTML = `<span style="color:red;">${errorMessage}</span>`;
-            status.style.backgroundColor = "#ffebee";
-            toggleBtn.textContent = "Start Listening";
-            updateConfidenceIndicator(0);
-
-            let retryDelay = 500;
-            if (event.error === "no-speech") retryDelay = 1000;
-            else if (event.error === "network") retryDelay = 2000;
-            else if (event.error === "language-not-supported")
-              retryDelay = 1500;
-
-            setTimeout(() => {
-              if (isAutoListening) recognition.start();
-            }, retryDelay);
-          };
-
-          async function setInitialLanguage() {
-            const userLang = navigator.language || "en-US";
-            const availableLangs = Array.from(languageSelect.options).map(
-              (opt) => opt.value
+        async function exportAsDocx(notes) {
+          try {
+            const { default: docx } = await import(
+              "https://cdn.jsdelivr.net/npm/docx@7.8.2/+esm"
             );
+            const { Document, Paragraph, TextRun, Packer } = docx;
 
-            const supportedLangs = [];
-            for (const lang of availableLangs) {
-              const isSupported = await checkLanguageSupport(lang);
-              if (isSupported) {
-                supportedLangs.push(lang);
-              }
-            }
-
-            let selectedLang = "en-US";
-            if (supportedLangs.includes(userLang)) {
-              selectedLang = userLang;
-            } else {
-              const baseLang = userLang.split("-")[0];
-              const matchingLang = supportedLangs.find((lang) =>
-                lang.startsWith(baseLang)
-              );
-              if (matchingLang) {
-                selectedLang = matchingLang;
-              } else if (supportedLangs.length > 0) {
-                selectedLang = supportedLangs[0];
-              }
-            }
-
-            languageSelect.value = selectedLang;
-            recognition.lang = selectedLang;
-            applyTextDirection(textDisplay, selectedLang);
-
-            Array.from(languageSelect.options).forEach((option) => {
-              option.disabled = !supportedLangs.includes(option.value);
+            const doc = new Document({
+              sections: [
+                {
+                  properties: {},
+                  children: [
+                    new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: "Speech Notes Export",
+                          bold: true,
+                        }),
+                      ],
+                    }),
+                    ...notes.map((note) => new Paragraph({ text: note.text })),
+                  ],
+                },
+              ],
             });
-          }
 
-          async function checkLanguageSupport(languageCode) {
-            if (!("webkitSpeechRecognition" in window)) return false;
-
-            const tempRecognition = new (window.SpeechRecognition ||
-              window.webkitSpeechRecognition)();
-            tempRecognition.lang = languageCode;
-
-            return new Promise((resolve) => {
-              let timeoutId;
-
-              tempRecognition.onerror = (event) => {
-                clearTimeout(timeoutId);
-                resolve(event.error !== "language-not-supported");
-              };
-
-              tempRecognition.onstart = () => {
-                clearTimeout(timeoutId);
-                tempRecognition.stop();
-                resolve(true);
-              };
-
-              tempRecognition.onend = () => {
-                clearTimeout(timeoutId);
-                resolve(true);
-              };
-
-              timeoutId = setTimeout(() => {
-                tempRecognition.stop();
-                resolve(false);
-              }, 1000);
-
-              tempRecognition.start();
-            });
-          }
-
-          await setInitialLanguage();
-
-          if (navigator.onLine) {
-            setTimeout(() => {
-              try {
-                recognition.start();
-              } catch (e) {
-                console.log("Initial start failed, retrying...", e);
-                setTimeout(() => {
-                  try {
-                    recognition.start();
-                  } catch (e2) {
-                    console.log("Second attempt failed:", e2);
-                    status.innerHTML =
-                      '<span style="color:red;">Microphone error. Refresh and allow access.</span>';
-                  }
-                }, 300);
-              }
-            }, 100);
+            const blob = await Packer.toBlob(doc);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `speech-notes-${
+              new Date().toISOString().split("T")[0]
+            }.docx`;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+          } catch (error) {
+            console.error("DOCX export failed:", error);
+            throw error;
           }
         }
 
-        // Populate audio input devices dropdown
+        async function exportAsTxt(notes) {
+          try {
+            const text = notes.map((n) => n.text).join("\n\n");
+            const blob = new Blob([text], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `speech-notes-${
+              new Date().toISOString().split("T")[0]
+            }.txt`;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+          } catch (error) {
+            console.error("TXT export failed:", error);
+            throw error;
+          }
+        }
+
+        // Import notes
+        elements.importBtn.addEventListener("click", () => {
+          const fileInput = document.createElement("input");
+          fileInput.type = "file";
+          fileInput.accept = ".docx,.txt";
+
+          fileInput.addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+              let notes = [];
+              if (file.name.endsWith(".docx")) {
+                const { default: mammoth } = await import(
+                  "https://cdn.jsdelivr.net/npm/mammoth@1.4.0/+esm"
+                );
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.extractRawText({ arrayBuffer });
+                notes = result.value
+                  .split("\n")
+                  .filter((l) => l.trim())
+                  .map((t) => ({ text: t }));
+              } else {
+                const text = await file.text();
+                notes = text
+                  .split("\n")
+                  .filter((l) => l.trim())
+                  .map((t) => ({ text: t }));
+              }
+
+              // Clear existing
+              elements.notesList.innerHTML = "";
+              try {
+                await clearAllNotesFromDB();
+              } catch {}
+
+              // Add new notes
+              let successCount = 0;
+              for (const note of notes) {
+                try {
+                  const noteId = await saveNoteToDB(
+                    note.text,
+                    elements.languageSelect.value
+                  );
+                  addNoteToUI(
+                    note.text,
+                    noteId,
+                    elements.languageSelect.value,
+                    elements.notesList
+                  );
+                  successCount++;
+                } catch (error) {
+                  addNoteToUI(
+                    note.text,
+                    null,
+                    elements.languageSelect.value,
+                    elements.notesList
+                  );
+                }
+              }
+
+              showAlert(`Imported ${successCount} notes`, "success");
+            } catch (error) {
+              console.error("Import failed:", error);
+              showAlert("Failed to import notes", "error");
+            }
+          });
+
+          fileInput.click();
+        });
+
+        // Google Translate
+        elements.googleTranslateBtn.addEventListener("click", () => {
+          const text = elements.textDisplay.textContent.trim();
+          if (!text || text === "Your transcribed text will appear here...") {
+            showAlert("No text to translate", "warning");
+            return;
+          }
+
+          openGoogleTranslate(
+            text,
+            elements.languageSelect.value,
+            elements.targetLanguage.value
+          );
+        });
+
+        // Translate
+        elements.translateBtn.addEventListener("click", async () => {
+          const text = elements.textDisplay.textContent.trim();
+          if (!text || text === "Your transcribed text will appear here...") {
+            showAlert("No text to translate", "warning");
+            return;
+          }
+
+          if (!navigator.onLine) {
+            showAlert("Translation requires internet", "warning");
+            return;
+          }
+
+          try {
+            elements.translateBtn.disabled = true;
+            elements.translateBtn.innerHTML =
+              '<span class="translation-loading"></span>Translating...';
+            elements.translationResult.textContent = "";
+
+            const translation = await translateText(
+              text,
+              elements.targetLanguage.value
+            );
+            elements.translationResult.textContent = translation;
+            applyTextDirection(
+              elements.translationResult,
+              elements.targetLanguage.value
+            );
+          } catch (error) {
+            console.error("Translation failed:", error);
+            showAlert("Translation failed", "error");
+            elements.translationResult.textContent = "Error: " + error.message;
+          } finally {
+            elements.translateBtn.disabled = false;
+            elements.translateBtn.textContent = "Translate Text";
+          }
+        });
+
+        // Audio controls
+        elements.startMicBtn.addEventListener("click", () =>
+          startMicrophone(elements)
+        );
+        elements.stopMicBtn.addEventListener("click", () => {
+          stopMicrophone();
+          elements.startMicBtn.disabled = false;
+          elements.stopMicBtn.disabled = true;
+        });
+
+        elements.downloadAudioBtn.addEventListener("click", () => {
+          if (audioUrl) {
+            const a = document.createElement("a");
+            a.href = audioUrl;
+            a.download = `recording-${new Date()
+              .toISOString()
+              .replace(/[:.]/g, "-")}.wav`;
+            a.click();
+          }
+        });
+
+        elements.volumeControl.addEventListener("input", () => {
+          if (gainNode) gainNode.gain.value = elements.volumeControl.value;
+        });
+
+        // Language change
+        elements.languageSelect.addEventListener("change", () => {
+          if (recognition) {
+            recognition.lang = elements.languageSelect.value;
+            applyTextDirection(
+              elements.textDisplay,
+              elements.languageSelect.value
+            );
+            if (isListening) {
+              recognition.stop();
+              setTimeout(() => recognition.start(), 100);
+            }
+          }
+        });
+
+        // Audio input devices
         async function updateAudioInputs() {
           try {
             const devices = await navigator.mediaDevices.enumerateDevices();
-            const audioInputs = devices.filter(
-              (device) => device.kind === "audioinput"
-            );
+            const audioInputs = devices.filter((d) => d.kind === "audioinput");
 
-            while (audioInputSelect.options.length > 1) {
-              audioInputSelect.remove(1);
+            while (elements.audioInputSelect.options.length > 1) {
+              elements.audioInputSelect.remove(1);
             }
 
             audioInputs.forEach((device) => {
               const option = document.createElement("option");
               option.value = device.deviceId;
               option.text =
-                device.label || `Microphone ${audioInputSelect.options.length}`;
-              audioInputSelect.appendChild(option);
+                device.label ||
+                `Microphone ${elements.audioInputSelect.options.length}`;
+              elements.audioInputSelect.appendChild(option);
             });
           } catch (err) {
-            console.error("Error enumerating devices:", err);
+            console.error("Device enumeration failed:", err);
           }
         }
 
@@ -1898,584 +2010,12 @@
           updateAudioInputs
         );
 
-        // Start microphone with proper error handling.
-        startMicBtn.addEventListener("click", async function () {
-          try {
-            // First stop any existing microphone
-            if (isMicActive) {
-              if (mediaRecorder && mediaRecorder.state !== "inactive") {
-                mediaRecorder.stop();
-              }
-              if (microphone) microphone.disconnect();
-            }
-
-            // Initialize audio context if needed
-            if (!audioContext && !(await initAudioContext())) {
-              return;
-            }
-
-            // Get selected device ID
-            const deviceId =
-              audioInputSelect.value === "default"
-                ? undefined
-                : audioInputSelect.value;
-
-            // Get user media with better device handling
-            const stream = await navigator.mediaDevices.getUserMedia({
-              audio: {
-                deviceId: deviceId,
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true,
-                channelCount: 1,
-              },
-              video: false,
-            });
-
-            // Create nodes.
-            gainNode = audioContext.createGain();
-            gainNode.gain.value = volumeControl.value;
-
-            analyser = audioContext.createAnalyser();
-            analyser.fftSize = 256;
-
-            // Create source and connect nodes.
-            microphone = audioContext.createMediaStreamSource(stream);
-
-            // Add audio processing for better headset compatibility
-            if (audioContext.createAudioWorklet) {
-              try {
-                // Create a blob URL for the audio processor worklet
-                const blob = new Blob([audioProcessorWorkletCode], {
-                  type: "application/javascript",
-                });
-                const url = URL.createObjectURL(blob);
-
-                await audioContext.audioWorklet.addModule(url);
-                const workletNode = new AudioWorkletNode(
-                  audioContext,
-                  "audio-processor"
-                );
-                microphone.connect(workletNode);
-                workletNode.connect(analyser);
-              } catch (e) {
-                console.warn(
-                  "AudioWorklet not available, using script processor"
-                );
-                const scriptNode = audioContext.createScriptProcessor(
-                  4096,
-                  1,
-                  1
-                );
-                microphone.connect(scriptNode);
-                scriptNode.connect(analyser);
-              }
-            } else {
-              microphone.connect(gainNode);
-              gainNode.connect(analyser);
-            }
-
-            analyser.connect(audioContext.destination);
-
-            // Setup visualization.
-            setupVisualizer();
-
-            // Setup recording.
-            mediaRecorder = new MediaRecorder(stream);
-            audioChunks = [];
-
-            mediaRecorder.ondataavailable = function (e) {
-              if (e.data.size > 0) {
-                audioChunks.push(e.data);
-              }
-            };
-
-            mediaRecorder.onstop = function () {
-              audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-              audioUrl = URL.createObjectURL(audioBlob);
-              downloadAudioBtn.style.display = "block";
-            };
-
-            mediaRecorder.start(100); // Collect 100ms chunks.
-            isMicActive = true;
-
-            // Update UI.
-            startMicBtn.disabled = true;
-            stopMicBtn.disabled = false;
-            status.innerHTML =
-              '<span class="listening-indicator"></span>Microphone active - recording audio.';
-          } catch (error) {
-            console.error("Microphone error:", error);
-            status.innerHTML = `<span style="color:red;">Microphone error: ${error.message}</span>`;
-            showAlert("Failed to access microphone. Please check permissions.", "error");
-          }
-        });
-
-        // Stop microphone properly.
-        stopMicBtn.addEventListener("click", function () {
-          if (!isMicActive) return;
-
-          try {
-            if (mediaRecorder && mediaRecorder.state !== "inactive") {
-              mediaRecorder.stop();
-            }
-
-            // Disconnect all nodes.
-            if (microphone) microphone.disconnect();
-            if (gainNode) gainNode.disconnect();
-            if (analyser) analyser.disconnect();
-
-            isMicActive = false;
-            startMicBtn.disabled = false;
-            stopMicBtn.disabled = true;
-            status.innerHTML = "Microphone stopped.";
-          } catch (err) {
-            console.error("Error stopping microphone:", err);
-          }
-        });
-
-        // Download audio recording
-        downloadAudioBtn.addEventListener("click", function () {
-          if (audioUrl) {
-            const a = document.createElement("a");
-            a.href = audioUrl;
-            a.download = `recording-${new Date().toISOString().replace(/[:.]/g, '-')}.wav`;
-            a.click();
-          }
-        });
-
-        // Volume control.
-        volumeControl.addEventListener("input", function () {
-          if (gainNode) {
-            gainNode.gain.value = this.value;
-          }
-        });
-
-        // Visualizer with proper animation frame handling.
-        function setupVisualizer() {
-          const canvas = document.createElement("canvas");
-          canvas.width = audioVisualizer.offsetWidth;
-          canvas.height = audioVisualizer.offsetHeight;
-          audioVisualizer.innerHTML = "";
-          audioVisualizer.appendChild(canvas);
-
-          const canvasCtx = canvas.getContext("2d");
-          const bufferLength = analyser.frequencyBinCount;
-          const dataArray = new Uint8Array(bufferLength);
-          let animationId;
-
-          function draw() {
-            if (!isMicActive) {
-              cancelAnimationFrame(animationId);
-              return;
-            }
-
-            animationId = requestAnimationFrame(draw);
-            analyser.getByteFrequencyData(dataArray);
-
-            canvasCtx.fillStyle = "rgb(200, 200, 200)";
-            canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-            const barWidth = (canvas.width / bufferLength) * 2.5;
-            let x = 0;
-
-            for (let i = 0; i < bufferLength; i++) {
-              const barHeight = dataArray[i] / 2;
-              const hue = (i / bufferLength) * 360;
-
-              canvasCtx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-              canvasCtx.fillRect(
-                x,
-                canvas.height - barHeight,
-                barWidth,
-                barHeight
-              );
-
-              x += barWidth + 1;
-            }
-          }
-
-          draw();
-        }
-
-        // Handle window resize.
-        window.addEventListener("resize", function () {
-          if (isMicActive) {
-            setupVisualizer();
-          }
-        });
-
-        // Button event listeners.
-        toggleBtn.addEventListener("click", function () {
-          this.disabled = true;
-
-          if (isListening) {
-            // Pause listening.
-            isAutoListening = false;
-            try {
-              recognition.stop();
-            } catch (e) {
-              console.log("Error stopping recognition:", e);
-            }
-            isListening = false;
-            toggleBtn.textContent = "Start Listening";
-            status.textContent = "Listening paused.";
-            status.style.backgroundColor = "#fff3e0";
-          } else {
-            // Start listening.
-            isAutoListening = true;
-            recognition.lang = languageSelect.value;
-            try {
-              recognition.start();
-            } catch (e) {
-              console.log("Error starting recognition:", e);
-              status.innerHTML =
-                '<span style="color:red;">Error starting microphone. Please refresh and allow permissions.</span>';
-              setTimeout(() => {
-                if (isAutoListening) recognition.start();
-              }, 300);
-            }
-          }
-
-          setTimeout(() => {
-            this.disabled = false;
-          }, 300);
-        });
-
-        addNoteBtn.addEventListener("click", async function () {
-          if (
-            textDisplay.textContent.trim() &&
-            textDisplay.textContent.trim() !==
-              "Your transcribed text will appear here..."
-          ) {
-            const noteText = textDisplay.textContent.trim();
-            const currentLanguage = languageSelect.value;
-            try {
-              const noteId = await saveNoteToDB(noteText, currentLanguage);
-              addNoteToUI(noteText, noteId, currentLanguage);
-              textDisplay.textContent = "";
-              finalTranscript = "";
-              lastFinalTranscript = "";
-              localStorage.removeItem("speechDraft");
-              showAlert("Note saved successfully", "success");
-            } catch (error) {
-              console.error("Failed to save note:", error);
-              addNoteToUI(noteText, null, currentLanguage);
-              textDisplay.textContent = "";
-              finalTranscript = "";
-              lastFinalTranscript = "";
-              localStorage.removeItem("speechDraft");
-              showAlert("Note saved locally (not synced to storage)", "warning");
-            }
-          } else {
-            showAlert("No text to save as note", "warning");
-          }
-        });
-
-        clearBtn.addEventListener("click", async function () {
-          if (confirm("Are you sure you want to clear all notes? This cannot be undone.")) {
-            textDisplay.textContent = "";
-            notesList.innerHTML = "";
-            finalTranscript = "";
-            lastFinalTranscript = "";
-            try {
-              await clearAllNotesFromDB();
-              localStorage.removeItem("speechDraft");
-              showAlert("All notes cleared", "success");
-            } catch (error) {
-              console.error("Failed to clear notes:", error);
-              showAlert("Failed to clear notes from storage", "error");
-            }
-          }
-        });
-
-        // Google Translate button event listener
-        googleTranslateBtn.addEventListener("click", function () {
-          const textToTranslate = textDisplay.textContent.trim();
-
-          if (
-            !textToTranslate ||
-            textToTranslate === "Your transcribed text will appear here..."
-          ) {
-            showAlert("Please enter some text to translate", "warning");
-            return;
-          }
-
-          const sourceLang = languageSelect.value;
-          const targetLang = targetLanguage.value;
-
-          openGoogleTranslate(textToTranslate, sourceLang, targetLang);
-        });
-
-        // Updated export button with dialog
-        exportBtn.addEventListener("click", async function () {
-          try {
-            const notes = await getAllNotesFromDB();
-            if (notes.length === 0) {
-              showAlert("No notes to export", "warning");
-              return;
-            }
-
-            // Create export dialog
-            const exportDialog = document.createElement("div");
-            exportDialog.className = "export-dialog";
-            exportDialog.innerHTML = `
-              <h3>Export Options</h3>
-              <button id="exportDocx">
-                <svg class="icon" viewBox="0 0 24 24">
-                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                </svg>
-                Export as Word Document (.docx)
-              </button>
-              <button id="exportTxt">
-                <svg class="icon" viewBox="0 0 24 24">
-                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                </svg>
-                Export as Text File (.txt)
-              </button>
-              <button id="exportCancel">Cancel</button>
-            `;
-
-            document.body.appendChild(exportDialog);
-
-            document
-              .getElementById("exportDocx")
-              .addEventListener("click", async function () {
-                await exportAsDocx(notes);
-                document.body.removeChild(exportDialog);
-              });
-
-            document
-              .getElementById("exportTxt")
-              .addEventListener("click", async function () {
-                await exportAsTxt(notes);
-                document.body.removeChild(exportDialog);
-              });
-
-            document
-              .getElementById("exportCancel")
-              .addEventListener("click", function () {
-                document.body.removeChild(exportDialog);
-              });
-          } catch (error) {
-            console.error("Export failed:", error);
-            showAlert("Failed to export notes", "error");
-          }
-        });
-
-        importBtn.addEventListener("click", function () {
-          const fileInput = document.createElement("input");
-          fileInput.type = "file";
-          fileInput.accept = ".docx,.txt";
-
-          fileInput.addEventListener("change", async function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            try {
-              let notes = [];
-
-              if (file.name.endsWith(".docx")) {
-                notes = await importDocxFile(file);
-              } else if (file.name.endsWith(".txt")) {
-                const text = await new Promise((resolve, reject) => {
-                  const reader = new FileReader();
-                  reader.onload = (event) => resolve(event.target.result);
-                  reader.onerror = reject;
-                  reader.readAsText(file);
-                });
-                notes = text
-                  .split("\n")
-                  .map((line) => line.trim())
-                  .filter((line) => line.length > 0)
-                  .map((line) => ({ text: line }));
-              }
-
-              // Clear existing notes.
-              notesList.innerHTML = "";
-              try {
-                await clearAllNotesFromDB();
-              } catch (error) {
-                console.error("Failed to clear existing notes:", error);
-              }
-
-              // Add new notes.
-              let successCount = 0;
-              for (const note of notes) {
-                try {
-                  const text = typeof note === "string" ? note : note.text;
-                  const language = note.language || languageSelect.value;
-                  const noteId = await saveNoteToDB(text, language);
-                  addNoteToUI(text, noteId, language);
-                  successCount++;
-                } catch (error) {
-                  console.error("Failed to import note:", error);
-                  const text = typeof note === "string" ? note : note.text;
-                  addNoteToUI(text, null, languageSelect.value);
-                }
-              }
-
-              showAlert(`Successfully imported ${successCount} of ${notes.length} notes`, "success");
-            } catch (error) {
-              console.error("Import failed:", error);
-              showAlert("Failed to import notes. Invalid file format.", "error");
-            }
-          });
-
-          fileInput.click();
-        });
-
-        // Translation button event listener with enhanced error handling
-        translateBtn.addEventListener("click", async function () {
-          if (
-            !textDisplay.textContent.trim() ||
-            textDisplay.textContent.trim() ===
-              "Your transcribed text will appear here..."
-          ) {
-            showAlert("Please enter text to translate", "warning");
-            return;
-          }
-
-          if (!navigator.onLine) {
-            showAlert("Translation requires internet connection", "warning");
-            return;
-          }
-
-          try {
-            translateBtn.disabled = true;
-            translateBtn.innerHTML =
-              '<span class="translation-loading"></span>Translating...';
-            translationResult.textContent = "";
-
-            const translation = await translateText(
-              textDisplay.textContent.trim(),
-              targetLanguage.value
-            );
-            translationResult.textContent = translation;
-            applyTextDirection(translationResult, targetLanguage.value);
-          } catch (error) {
-            console.error("Translation failed:", error);
-            showAlert("Translation failed. Please try again.", "error");
-            translationResult.textContent =
-              "Translation error: " + error.message;
-          } finally {
-            translateBtn.disabled = false;
-            translateBtn.textContent = "Translate Text";
-          }
-        });
-
-        languageSelect.addEventListener("change", function () {
-          if (recognition) {
-            recognition.lang = this.value;
-            applyTextDirection(textDisplay, this.value);
-            if (isListening) {
-              recognition.stop();
-              setTimeout(() => recognition.start(), 100);
-            }
-          }
-        });
-
-        function addNoteToUI(text, id, language) {
-          const noteItem = document.createElement("li");
-          noteItem.className = "note-item";
-          noteItem.dataset.id = id || Date.now();
-
-          const noteText = document.createElement("span");
-          noteText.textContent = text;
-
-          if (language) {
-            const baseLang = language.split("-")[0];
-            if (rtlLanguages.includes(baseLang)) {
-              noteItem.classList.add("rtl-text");
-            }
-          }
-
-          const deleteBtn = document.createElement("button");
-          deleteBtn.className = "delete-note";
-          deleteBtn.innerHTML = "×";
-          deleteBtn.addEventListener("click", async function () {
-            if (confirm("Delete this note?")) {
-              noteItem.remove();
-              if (id) {
-                try {
-                  await deleteNoteFromDB(id);
-                  showAlert("Note deleted", "success");
-                } catch (error) {
-                  console.error("Failed to delete note from DB:", error);
-                  showAlert("Failed to delete note from storage", "error");
-                }
-              }
-            }
-          });
-
-          // Add touch events for mobile with swipe to delete.
-          noteItem.addEventListener(
-            "touchstart",
-            function (e) {
-              touchStartX = e.changedTouches[0].screenX;
-              noteItem.classList.add("swiping");
-            },
-            { passive: true }
-          );
-
-          noteItem.addEventListener(
-            "touchmove",
-            function (e) {
-              touchEndX = e.changedTouches[0].screenX;
-              const diff = touchStartX - touchEndX;
-              if (diff > 30) {
-                noteItem.style.transform = `translateX(${-diff}px)`;
-                if (diff > 100) {
-                  deleteBtn.style.opacity = "1";
-                }
-              }
-            },
-            { passive: true }
-          );
-
-          noteItem.addEventListener(
-            "touchend",
-            function () {
-              noteItem.classList.remove("swiping");
-              const diff = touchStartX - touchEndX;
-              if (diff > 100) {
-                deleteBtn.click();
-              } else {
-                noteItem.style.transform = "";
-              }
-            },
-            { passive: true }
-          );
-
-          noteItem.appendChild(noteText);
-          noteItem.appendChild(deleteBtn);
-          notesList.appendChild(noteItem);
-          noteItem.scrollIntoView({ behavior: "smooth" });
-        }
-
-        textDisplay.addEventListener("keydown", function (e) {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            addNoteBtn.click();
-          }
-        });
-
-        // Check online status and update UI.
-        function updateOnlineStatus() {
-          const offlineIndicator = document.getElementById("offlineIndicator");
-          if (navigator.onLine) {
-            offlineIndicator.style.display = "none";
-          } else {
-            offlineIndicator.style.display = "block";
-          }
-        }
-
+        // Online/offline status
         window.addEventListener("online", updateOnlineStatus);
         window.addEventListener("offline", updateOnlineStatus);
-        updateOnlineStatus();
 
-        // Page visibility handling.
-        document.addEventListener("visibilitychange", function () {
+        // Page visibility
+        document.addEventListener("visibilitychange", () => {
           if (document.visibilityState === "hidden" && isListening) {
             recognition.stop();
           } else if (
@@ -2486,62 +2026,54 @@
           }
         });
 
-        // Beforeunload handling.
-        window.addEventListener("beforeunload", function (e) {
-          if (isListening) {
-            recognition.stop();
-          }
+        // Beforeunload
+        window.addEventListener("beforeunload", () => {
+          if (isListening) recognition.stop();
+          if (isMicActive) stopMicrophone();
         });
-      });
 
-      // Service worker registration.
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("sw.js")
-            .then((registration) => {
-              console.log("ServiceWorker registration successful.");
-            })
-            .catch((err) => {
-              console.log("ServiceWorker registration failed: ", err);
-            });
-        });
-      }
+        // PWA installation
+        let deferredPrompt;
+        window.addEventListener("beforeinstallprompt", (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
 
-      // Install prompt handling.
-      let deferredPrompt;
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-
-        const installBtn = document.createElement("button");
-        installBtn.className = "install-btn";
-        installBtn.innerHTML = `
+          const installBtn = document.createElement("button");
+          installBtn.className = "install-btn";
+          installBtn.innerHTML = `
           <svg class="icon" viewBox="0 0 24 24">
             <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z" />
           </svg>
           Install App
         `;
 
-        installBtn.addEventListener("click", () => {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === "accepted") {
-              console.log("User accepted install.");
+          installBtn.addEventListener("click", () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choice) => {
+              if (choice.outcome === "accepted") {
+                installBtn.remove();
+              }
+            });
+          });
+
+          document.body.appendChild(installBtn);
+
+          setTimeout(() => {
+            if (document.body.contains(installBtn)) {
+              installBtn.remove();
             }
-            deferredPrompt = null;
-            document.body.removeChild(installBtn);
+          }, 15000);
+        });
+      }
+
+      // Service worker registration
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").catch((err) => {
+            console.error("ServiceWorker failed:", err);
           });
         });
-
-        document.body.appendChild(installBtn);
-
-        setTimeout(() => {
-          if (document.body.contains(installBtn)) {
-            document.body.removeChild(installBtn);
-          }
-        }, 15000);
-      });
+      }
     </script>
   </body>
 </html>
