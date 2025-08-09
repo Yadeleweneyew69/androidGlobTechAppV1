@@ -825,8 +825,14 @@
       ];
       const translationCache = new Map();
       const MAX_STORAGE_QUOTA = 5 * 1024 * 1024; // 5MB
-      let lastProcessedIndex = 0; // Track the last processed result index
-      let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      let lastProcessedIndex = 0;
+      let isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+      let isChrome = /Chrome/i.test(navigator.userAgent);
+      let debounceTimer;
+      let lastFinalText = "";
 
       // Initialize the application
       document.addEventListener("DOMContentLoaded", async function () {
@@ -843,6 +849,7 @@
           downloadAudioBtn: document.getElementById("downloadAudioBtn"),
           status: document.getElementById("status"),
           languageSelect: document.getElementById("languageSelect"),
+          confidenceLevel: document.getElementById("confidenceLevel"),
           translateBtn: document.getElementById("translateBtn"),
           targetLanguage: document.getElementById("targetLanguage"),
           translationResult: document.getElementById("translationResult"),
@@ -857,8 +864,29 @@
           storageUsageProgress: document.getElementById("storageUsageProgress"),
         };
 
-        // Initialize platform-specific features
-        initPlatformSpecificFeatures(elements);
+        // Enhanced Android detection and warning
+        if (isAndroid()) {
+          elements.androidWarning.style.display = "block";
+          elements.androidStatus.style.display = "block";
+          
+          if (!isChrome) {
+            elements.androidWarning.innerHTML += 
+              "<br><br><strong>Recommendation:</strong> Use Chrome for best results with local languages";
+            elements.androidStatusText.textContent = "Non-Chrome browser detected - some features may be limited";
+          } else {
+            elements.androidStatusText.textContent = "Chrome browser detected - optimal performance";
+          }
+        }
+
+        if (isIOS()) {
+          const iosMessage = document.createElement("div");
+          iosMessage.className = "info-message";
+          iosMessage.innerHTML =
+            "<strong>iOS Users:</strong> Use Safari for best results";
+          document
+            .querySelector(".container")
+            .insertBefore(iosMessage, elements.status);
+        }
 
         // Initialize database and load notes
         await initDB();
@@ -874,24 +902,198 @@
         updateOnlineStatus();
       });
 
-      // Platform-specific initialization
-      function initPlatformSpecificFeatures(elements) {
-        if (isAndroid()) {
-          elements.androidWarning.style.display = "block";
-          if (!/Chrome/i.test(navigator.userAgent)) {
-            elements.androidWarning.innerHTML +=
-              "<br><br><strong>Recommendation:</strong> Use Chrome for best results";
-          }
+      // Initialize speech recognition with Android-specific adjustments
+      function initSpeechRecognition(elements) {
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          elements.status.innerHTML =
+            '<span style="color:red;">Speech recognition not supported in your browser</span>';
+          elements.toggleBtn.disabled = true;
+          elements.addNoteBtn.disabled = true;
+          return;
         }
 
-        if (isIOS()) {
-          const iosMessage = document.createElement("div");
-          iosMessage.className = "info-message";
-          iosMessage.innerHTML =
-            "<strong>iOS Users:</strong> Use Safari for best results";
-          document
-            .querySelector(".container")
-            .insertBefore(iosMessage, elements.status);
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        
+        // Android-specific adjustments
+        if (isAndroid()) {
+          recognition.continuous = false;  // Better compatibility with continuous=false on Android
+          recognition.interimResults = true;
+          recognition.maxAlternatives = 1;
+          
+          // Adjust these values for better Android performance
+          recognition.onaudiostart = function() {
+            console.log('Audio capture started');
+          };
+          
+          recognition.onsoundstart = function() {
+            console.log('Sound detected');
+          };
+          
+          recognition.onspeechstart = function() {
+            console.log('Speech detected');
+          };
+          
+          recognition.onspeechend = function() {
+            console.log('Speech ended');
+            if (isAutoListening) {
+              setTimeout(() => recognition.start(), 300);
+            }
+          };
+        } else {
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.maxAlternatives = 1;
+        }
+        
+        recognition.lang = elements.languageSelect.value;
+
+        recognition.onresult = (event) => {
+          clearTimeout(debounceTimer);
+
+          let interimTranscript = "";
+          let newFinalTranscript = "";
+          let hasNewFinal = false;
+
+          // Process only new results since last processed index
+          for (
+            let i = Math.max(lastProcessedIndex, event.resultIndex);
+            i < event.results.length;
+            i++
+          ) {
+            const result = event.results[i];
+            const transcript = result[0].transcript.trim();
+            const confidence = result[0].confidence || 0;
+
+            if (result.isFinal) {
+              // Only add if it's different from the last final transcript
+              if (transcript && transcript !== lastFinalText) {
+                newFinalTranscript += transcript + " ";
+                lastFinalText = transcript;
+                hasNewFinal = true;
+              }
+            } else {
+              // For interim results, only keep the most recent one
+              interimTranscript = transcript;
+            }
+
+            if (confidence > lastConfidence) {
+              lastConfidence = confidence;
+              updateConfidenceIndicator(confidence, elements.confidenceLevel);
+            }
+          }
+
+          // Update last processed index
+          lastProcessedIndex = event.results.length - 1;
+
+          // On mobile, we need to be more careful with interim results
+          if (isMobile) {
+            if (hasNewFinal) {
+              finalTranscript += newFinalTranscript;
+              interimTranscript = ""; // Clear interim when we have final
+            }
+          } else {
+            if (newFinalTranscript) {
+              finalTranscript += newFinalTranscript;
+            }
+          }
+
+          // Use debouncing to prevent rapid updates
+          debounceTimer = setTimeout(
+            () => {
+              updateTextDisplay(
+                finalTranscript,
+                interimTranscript,
+                elements.textDisplay,
+                elements.languageSelect.value
+              );
+            },
+            isMobile ? 300 : 100
+          ); // Longer debounce on mobile
+        };
+
+        recognition.onerror = (event) => {
+          console.error("Recognition error:", event.error);
+          isListening = false;
+          lastProcessedIndex = 0; // Reset index on error
+          lastFinalText = ""; // Reset last final text
+
+          let errorMessage = "Error occurred in recognition";
+          switch (event.error) {
+            case "no-speech":
+              errorMessage = "No speech detected";
+              break;
+            case "audio-capture":
+              errorMessage = "Microphone not available";
+              break;
+            case "not-allowed":
+              errorMessage = "Microphone access denied";
+              break;
+            case "language-not-supported":
+              errorMessage = "Language not supported";
+              break;
+          }
+
+          elements.status.innerHTML = `<span style="color:red;">${errorMessage}</span>`;
+          elements.status.style.backgroundColor = "#ffebee";
+          elements.toggleBtn.textContent = "Start Listening";
+
+          // Android-specific retry logic
+          if (isAndroid && isAutoListening) {
+            setTimeout(() => {
+              try {
+                recognition.start();
+              } catch (e) {
+                console.log("Android restart failed, retrying...", e);
+                setTimeout(() => isAutoListening && recognition.start(), 1000);
+              }
+            }, 1000);
+          }
+        };
+
+        recognition.onstart = () => {
+          isListening = true;
+          lastProcessedIndex = 0; // Reset index when starting
+          lastFinalText = ""; // Reset last final text
+          elements.status.innerHTML =
+            '<span class="listening-indicator"></span>Listening... Speak now!';
+          elements.status.style.backgroundColor = "#e8f5e9";
+          elements.toggleBtn.textContent = "Pause Listening";
+          updateConfidenceIndicator(0, elements.confidenceLevel);
+        };
+
+        recognition.onend = () => {
+          if (isAutoListening) {
+            // Different handling for Android
+            if (isAndroid) {
+              setTimeout(() => {
+                try {
+                  recognition.start();
+                } catch (e) {
+                  console.log("Android auto-restart failed, retrying...", e);
+                  setTimeout(() => isAutoListening && recognition.start(), 300);
+                }
+              }, 300);
+            } else {
+              setTimeout(() => {
+                try {
+                  recognition.start();
+                } catch (e) {
+                  console.log("Auto-restart failed, retrying...", e);
+                  setTimeout(() => isAutoListening && recognition.start(), 300);
+                }
+              }, 100);
+            }
+          }
+        };
+
+        // Start initial listening if online
+        if (navigator.onLine) {
+          setTimeout(() => recognition.start(), 300);
         }
       }
 
@@ -1030,134 +1232,6 @@
         }
       }
 
-      // Speech recognition functions
-      function initSpeechRecognition(elements) {
-        if (
-          !("webkitSpeechRecognition" in window) &&
-          !("SpeechRecognition" in window)
-        ) {
-          elements.status.innerHTML =
-            '<span style="color:red;">Speech recognition not supported in your browser</span>';
-          elements.toggleBtn.disabled = true;
-          elements.addNoteBtn.disabled = true;
-          return;
-        }
-
-        const SpeechRecognition =
-          window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.maxAlternatives = 1;
-        recognition.lang = elements.languageSelect.value;
-
-        recognition.onresult = (event) => {
-          let interimTranscript = "";
-          let newFinalTranscript = "";
-          let hasNewFinal = false;
-
-          // Only process new results since last processed index
-          for (let i = Math.max(lastProcessedIndex, event.resultIndex); i < event.results.length; i++) {
-            const result = event.results[i];
-            const transcript = result[0].transcript;
-            const confidence = result[0].confidence || 0;
-
-            if (result.isFinal) {
-              newFinalTranscript += transcript + " ";
-              lastFinalTranscript = newFinalTranscript;
-              hasNewFinal = true;
-            } else {
-              interimTranscript = transcript;
-            }
-
-            if (confidence > lastConfidence) {
-              lastConfidence = confidence;
-              updateConfidenceIndicator(confidence, elements.confidenceLevel);
-            }
-          }
-
-          // Update last processed index
-          lastProcessedIndex = event.results.length - 1;
-
-          // On mobile, we need to be more careful with interim results
-          if (isMobile) {
-            if (hasNewFinal) {
-              finalTranscript += newFinalTranscript;
-              interimTranscript = ""; // Clear interim when we have final
-            }
-          } else {
-            if (newFinalTranscript) {
-              finalTranscript += newFinalTranscript;
-            }
-          }
-
-          updateTextDisplay(
-            finalTranscript,
-            interimTranscript,
-            elements.textDisplay,
-            elements.languageSelect.value
-          );
-        };
-
-        recognition.onerror = (event) => {
-          console.error("Recognition error:", event.error);
-          isListening = false;
-          lastProcessedIndex = 0; // Reset index on error
-
-          let errorMessage = "Error occurred in recognition";
-          switch (event.error) {
-            case "no-speech":
-              errorMessage = "No speech detected";
-              break;
-            case "audio-capture":
-              errorMessage = "Microphone not available";
-              break;
-            case "not-allowed":
-              errorMessage = "Microphone access denied";
-              break;
-            case "language-not-supported":
-              errorMessage = "Language not supported";
-              break;
-          }
-
-          elements.status.innerHTML = `<span style="color:red;">${errorMessage}</span>`;
-          elements.status.style.backgroundColor = "#ffebee";
-          elements.toggleBtn.textContent = "Start Listening";
-
-          setTimeout(() => {
-            if (isAutoListening) recognition.start();
-          }, 1000);
-        };
-
-        recognition.onstart = () => {
-          isListening = true;
-          lastProcessedIndex = 0; // Reset index when starting
-          elements.status.innerHTML =
-            '<span class="listening-indicator"></span>Listening... Speak now!';
-          elements.status.style.backgroundColor = "#e8f5e9";
-          elements.toggleBtn.textContent = "Pause Listening";
-          updateConfidenceIndicator(0, elements.confidenceLevel);
-        };
-
-        recognition.onend = () => {
-          if (isAutoListening) {
-            setTimeout(() => {
-              try {
-                recognition.start();
-              } catch (e) {
-                console.log("Auto-restart failed, retrying...", e);
-                setTimeout(() => isAutoListening && recognition.start(), 300);
-              }
-            }, 100);
-          }
-        };
-
-        // Start initial listening if online
-        if (navigator.onLine) {
-          setTimeout(() => recognition.start(), 300);
-        }
-      }
-
       // UI update functions
       function updateTextDisplay(final, interim, textDisplay, language) {
         if ("requestIdleCallback" in window) {
@@ -1185,10 +1259,14 @@
         if (!final && !interim) return;
 
         let newContent = final;
-        
+
         // Only append interim results if they're different from the last final result
-        if (interim && !final.endsWith(interim.trim())) {
-          newContent += (final ? " " : "") + '<span style="color:#aaa;">' + interim + "</span>";
+        if (interim && interim.trim() && !final.endsWith(interim.trim())) {
+          newContent +=
+            (final ? " " : "") +
+            '<span style="color:#aaa;">' +
+            interim +
+            "</span>";
         }
 
         if (!interim) {
